@@ -12,5 +12,7 @@ namespace ffxivList.Models
         public string Name { get; set; }
 
         public string ProfileImage { get; set; }
+
+        public string Role { get; set; }
     }
 }
