@@ -40,7 +40,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-controller="Account" asp-action="ProfileView">Hello</a></li>
+                        <li><a asp-controller="Account" asp-action="ProfileView">Signed in as @User.Identity.Name </a></li>
                         <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
                     }
                     else

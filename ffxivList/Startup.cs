@@ -134,11 +134,10 @@ namespace ffxivList
                         var identity = context.Principal.Identity as ClaimsIdentity;
                         if (identity != null)
                         {
-                            //// Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
-                            //if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
-                            //    identity.HasClaim(c => c.Type == "name"))
-                            //    identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
-
+                            // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
+                            if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
+                                identity.HasClaim(c => c.Type == "name"))
+                                identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
                             // Check if token names are stored in Properties
                             if (context.Properties.Items.ContainsKey(".TokenNames"))
                             {
@@ -180,14 +179,13 @@ namespace ffxivList
 
                         return Task.CompletedTask;
                     }
-                }                
+                }
             };
             options.Scope.Clear();
             options.Scope.Add("openid");
             options.Scope.Add("name");
             options.Scope.Add("email");
             options.Scope.Add("picture");
-
             app.UseOpenIdConnectAuthentication(options);
 
             app.UseMvc(routes =>

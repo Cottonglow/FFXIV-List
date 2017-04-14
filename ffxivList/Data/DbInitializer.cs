@@ -10,7 +10,12 @@ namespace ffxivList.Data
     {
         public static void Initialize(FFListContext context)
         {
-            context.Database.EnsureCreated();
+            //context.Database.EnsureCreated();
+
+            //foreach(var leve in context.Levemetes.Where(c => c.IsComplete == true))
+            //{
+
+            //}
 
             //// Look for any students.
             //if (context.Levemetes.Any())
