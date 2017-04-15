@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,12 +36,19 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    <li><a asp-area="" asp-controller="Levemetes" asp-action="Index">Levemetes</a></li>
+                        @if (User.Identity.IsAuthenticated && User.Claims.FirstOrDefault(c => c.Type == "role")?.Value == "Admin")
+                        {
+                            <li><a asp-area="" asp-controller="Levemetes" asp-action="IndexAdmin">Levemetes</a></li>
+                        }
+                        else
+                        {
+                        <li><a asp-area="" asp-controller="Levemetes" asp-action="Index">Levemetes</a></li>
+                        }
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-controller="Account" asp-action="ProfileView">Hello</a></li>
+                        <li><a asp-controller="Account" asp-action="ProfileView">Signed in as @User.Identity.Name </a></li>
                         <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
                     }
                     else

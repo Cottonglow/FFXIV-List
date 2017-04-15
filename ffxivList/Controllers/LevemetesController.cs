@@ -25,6 +25,12 @@ namespace ffxivList.Controllers
             return View(await _context.Levemetes.ToListAsync());
         }
 
+        // GET: Levemetes
+        public async Task<IActionResult> IndexAdmin()
+        {
+            return View(await _context.Levemetes.ToListAsync());
+        }
+
         // GET: Levemetes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -54,7 +60,7 @@ namespace ffxivList.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,IsComplete,Level")] Levemete levemete)
+        public async Task<IActionResult> Create([Bind("ID,Name,Level")] Levemete levemete)
         {
             if (ModelState.IsValid)
             {

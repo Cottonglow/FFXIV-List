@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 
 namespace ffxivList.Models
 {
-    public class Levemete
+    public class User
     {
-        public int ID { get; set; }
+        public string ID { get; set; }
         public string Name { get; set; }
-        public int Level { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
     }
 }
