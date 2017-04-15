@@ -20,6 +20,7 @@ namespace ffxivList.Controllers
     public class AccountController : Controller
     {
         private readonly Auth0Settings _auth0Settings;
+        private UserProfile userProfile;
 
         public AccountController(IOptions<Auth0Settings> auth0Settings)
         {
@@ -53,28 +54,35 @@ namespace ffxivList.Controllers
 
                     // Get user info from token
                     var userInfo = await client.GetTokenInfoAsync(result.IdToken);
+                    
+                    User user = new User { ID = userInfo.UserId, Email = userInfo.Email, Name = userInfo.NickName };
 
+                    using (var context = new FFListContext())
+                    {             
+                        if (context.Users.Find(user.ID) == null)
+                        {
+                            user.Role = "User";
+                            context.Users.Add(user);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            var userDetails = context.Users.Find(user.ID);
+                            user.Role = userDetails.Role;
+                        }
+                    }
+                    
+                    userProfile = new UserProfile() { EmailAddress = user.Email, Name = user.Name, Role = user.Role, ProfileImage = userInfo.Picture };
+                    
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
                     {
                         new Claim(ClaimTypes.NameIdentifier, userInfo.UserId),
                         new Claim(ClaimTypes.Name, userInfo.NickName),
                         new Claim(ClaimTypes.Email, userInfo.Email),
-                        new Claim("picture", userInfo.Picture)
-
+                        new Claim("picture", userInfo.Picture),
+                        new Claim("role", user.Role)
                     }, CookieAuthenticationDefaults.AuthenticationScheme));
-                    
-                    using (var context = new FFListContext())
-                    {             
-                        User user = new User {ID = userInfo.UserId, Email = userInfo.Email, Name = userInfo.NickName };
-
-                        if (context.Users.Find(user.ID) == null)
-                        {
-                            context.Users.Add(user);
-                            context.SaveChanges();
-                        }
-                    }
-                    
 
                     // Sign user into cookie middleware
                     await HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
@@ -117,12 +125,11 @@ namespace ffxivList.Controllers
         [Authorize]
         public IActionResult ProfileView()
         {
-            return View(new UserProfile()
-            {
+            return View(new UserProfile() {
+                EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value, 
+                Role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value,
                 Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
-                EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
-                Role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value
+                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
         }
 
