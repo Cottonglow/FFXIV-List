@@ -35,34 +35,29 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>                    
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     @if (User.Identity.IsAuthenticated && User.Claims.FirstOrDefault(c => c.Type == "role")?.Value == "Admin")
                     {
-                        <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret" ></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+                                <li><a asp-area="" asp-controller="Levemetes" asp-action="IndexAdmin">Levemetes</a></li>  
+                                <li><a asp-area="" asp-controller="Quests" asp-action="IndexAdmin">Quests</a></li>
+                                <li><a asp-area="" asp-controller="Crafts" asp-action="IndexAdmin">Crafts</a></li>
+                            </ul>  
+                        </li>
                     }
-                    @if (User.Identity.IsAuthenticated && User.Claims.FirstOrDefault(c => c.Type == "role")?.Value == "Admin")
+                    @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-area="" asp-controller="Levemetes" asp-action="IndexAdmin">Levemetes</a></li>
+                        <li><a asp-area="" asp-controller="AllUserLevemetes" asp-action="Index">Levemetes</a></li>
+                        <li><a asp-area="" asp-controller="AllUserQuests" asp-action="Index">Quests</a></li>
+                        <li><a asp-area="" asp-controller="AllUserCrafts" asp-action="Index">Crafts</a></li>
                     }
                     else
                     {
-                    <li><a asp-area="" asp-controller="Levemetes" asp-action="Index">Levemetes</a></li>
-                    }
-                    @if (User.Identity.IsAuthenticated && User.Claims.FirstOrDefault(c => c.Type == "role")?.Value == "Admin")
-                    {
-                        <li><a asp-area="" asp-controller="Quests" asp-action="IndexAdmin">Quests</a></li>
-                    }
-                    else
-                    {
+                        <li><a asp-area="" asp-controller="Levemetes" asp-action="Index">Levemetes</a></li>
                         <li><a asp-area="" asp-controller="Quests" asp-action="Index">Quests</a></li>
-                    }
-                    @if (User.Identity.IsAuthenticated && User.Claims.FirstOrDefault(c => c.Type == "role")?.Value == "Admin")
-                    {
-                        <li><a asp-area="" asp-controller="Crafts" asp-action="IndexAdmin">Crafts</a></li>
-                    }
-                    else
-                    {
-                        <li><a asp-area="" asp-controller="UserCrafts" asp-action="Index">Crafts</a></li>
+                        <li><a asp-area="" asp-controller="Crafts" asp-action="Index">Crafts</a></li>
                     }
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
@@ -70,8 +65,12 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li><a asp-controller="Account" asp-action="ProfileView">Signed in as @User.Identity.Name </a></li>
-                        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">@User.Identity.Name <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a asp-controller="Account" asp-action="ProfileView">My Profile</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            </ul>
+                        </li>
                     }
                     else
                     {
@@ -111,5 +110,12 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+<script src="Bootstrap/js/jquery.js" type="text/javascript"></script>
+<script src="Bootstrap/js/dropdown.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.dropdown-toggle').dropdown();
+    }); 
+</script>
 </body>
 </html>

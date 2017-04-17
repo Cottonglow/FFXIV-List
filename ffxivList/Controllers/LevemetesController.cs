@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
@@ -23,27 +21,15 @@ namespace ffxivList.Controllers
         // GET: Levemetes
         public async Task<IActionResult> Index()
         {
-            ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Levemete = await _context.Levemetes.ToListAsync();
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
-            {
-                modelContainer.UserLevemete = await _context.UserLevemete.Where(l => l.UserID == userId).ToListAsync();
-            }
-            return View(modelContainer);
+            List<Levemete> levemete = await _context.Levemetes.ToListAsync();
+            return View(levemete);
         }
 
         // GET: Levemetes
         public async Task<IActionResult> IndexAdmin()
         {
-            ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Levemete = await _context.Levemetes.ToListAsync();
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
-            {
-                modelContainer.UserLevemete = await _context.UserLevemete.Where(l => l.UserID == userId).ToListAsync();
-            }
-            return View(modelContainer);
+            List<Levemete> levemete = await _context.Levemetes.ToListAsync();
+            return View(levemete);
         }
 
         // GET: Levemetes/Details/5

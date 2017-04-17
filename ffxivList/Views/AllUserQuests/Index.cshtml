@@ -1,0 +1,41 @@
+@model List<ffxivList.Models.AllUserQuest>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<form asp-controller="AllUserQuests" asp-action="Index" method="post" role="form">
+    <table class="table">
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].QuestName)
+                        <input asp-for="@Model[i].QuestName" type="hidden" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model[i].QuestLevel)
+                        <input asp-for="@Model[i].QuestLevel" type="hidden" />
+                    </td>
+                    <td>
+                        <input asp-for="@Model[i].IsComplete" type="checkbox" />
+                    </td>
+                    <input asp-for="@Model[i].QuestID" type="hidden" />
+                    <input asp-for="@Model[i].UserQuestID" type="hidden" />
+                    <input asp-for="@Model[i].UserID" type="hidden" />
+                    @*<td>
+                                <a asp-action="Edit" asp-route-id="@item.UserCraftID">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.UserCraftID">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.UserCraftID">Delete</a>
+                            </td>
+                            <input asp-for="@Model.UserCraft.IsComplete" type="checkbox" />*@
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-default" />
+</form>

@@ -1,10 +1,6 @@
-@model ffxivList.Models.ModelContainer
+@model List<ffxivList.Models.Levemete>
 
-@{
-    ViewData["Title"] = "Index Admin";
-}
-
-<h2>Index</h2>
+<h2>Levemete Admin</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -21,16 +17,13 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Levemete) {
+@foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.LevemeteName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LevemeteLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.UserLevemete.FirstOrDefault(l => l.LevemeteID == item.LevemeteID).IsComplete)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.LevemeteID">Edit</a> |

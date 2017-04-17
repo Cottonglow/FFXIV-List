@@ -1,4 +1,4 @@
-@model ffxivList.Models.UserCraft
+@model ffxivList.Models.AllUserCraft
 
 @{
     ViewData["Title"] = "Details";
@@ -7,9 +7,15 @@
 <h2>Details</h2>
 
 <div>
-    <h4>UserCraft</h4>
+    <h4>AllUserCraft</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserCraftID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserCraftID)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.CraftID)
         </dt>
@@ -28,9 +34,21 @@
         <dd>
             @Html.DisplayFor(model => model.IsComplete)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CraftName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CraftName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CraftLevel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CraftLevel)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.UserCraftID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.AllUserCraftID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

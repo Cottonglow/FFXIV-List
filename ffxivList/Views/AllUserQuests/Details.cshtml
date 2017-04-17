@@ -1,0 +1,54 @@
+@model ffxivList.Models.AllUserQuest
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>AllUserQuest</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserQuestID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserQuestID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QuestID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsComplete)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsComplete)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QuestName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestLevel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.QuestLevel)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

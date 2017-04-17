@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
-using System.Security.Claims;
 
 namespace ffxivList.Controllers
 {
@@ -27,67 +23,14 @@ namespace ffxivList.Controllers
         {
             modelContainer = new ModelContainer();
             modelContainer.Craft = await _context.Craft.ToListAsync();
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
-            {
-                modelContainer.UserCraft = await _context.UserCraft.Where(l => l.UserID == userId).ToListAsync();
-            }
             return View(modelContainer);
         }
-
-        // POST: UserCrafts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(int id, [Bind("UserCraftID,CraftID,UserID,IsComplete")] UserCraft userCraft)
-        {
-            modelContainer = new ModelContainer();
-            modelContainer.Craft = await _context.Craft.ToListAsync();
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
-            {
-                modelContainer.UserCraft = await _context.UserCraft.Where(l => l.UserID == userId).ToListAsync();
-            }
-
-            if (id != userCraft.UserCraftID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(userCraft);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserCraftExists(userCraft.UserCraftID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return View(modelContainer);
-        }
-
+        
         // GET: Crafts
         public async Task<IActionResult> IndexAdmin()
         {
             ModelContainer modelContainer = new ModelContainer();
             modelContainer.Craft = await _context.Craft.ToListAsync();
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
-            {
-                modelContainer.UserCraft = await _context.UserCraft.Where(l => l.UserID == userId).ToListAsync();
-            }
             return View(modelContainer);
         }
 

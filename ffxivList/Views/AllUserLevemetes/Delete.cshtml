@@ -1,0 +1,59 @@
+@model ffxivList.Models.AllUserLevemete
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>AllUserLevemete</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="ID" />
+        <dt>
+            @Html.DisplayNameFor(model => model.UserLevemeteID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserLevemeteID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsComplete)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsComplete)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteLevel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteLevel)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <a asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>

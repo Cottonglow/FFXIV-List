@@ -1,0 +1,54 @@
+@model ffxivList.Models.AllUserLevemete
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>AllUserLevemete</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserLevemeteID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserLevemeteID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserID)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsComplete)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IsComplete)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevemeteLevel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteLevel)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
