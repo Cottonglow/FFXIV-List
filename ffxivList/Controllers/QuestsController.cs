@@ -11,42 +11,42 @@ using System.Security.Claims;
 
 namespace ffxivList.Controllers
 {
-    public class LevemetesController : Controller
+    public class QuestsController : Controller
     {
         private readonly FFListContext _context;
 
-        public LevemetesController(FFListContext context)
+        public QuestsController(FFListContext context)
         {
-            _context = context;     
+            _context = context;    
         }
 
-        // GET: Levemetes
+        // GET: Quests
         public async Task<IActionResult> Index()
         {
             ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Levemete = await _context.Levemetes.ToListAsync();
+            modelContainer.Quest = await _context.Quest.ToListAsync();
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (User.Identity.IsAuthenticated && userId != null)
             {
-                modelContainer.UserLevemete = await _context.UserLevemete.Where(l => l.UserID == userId).ToListAsync();
+                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserID == userId).ToListAsync();
             }
             return View(modelContainer);
         }
 
-        // GET: Levemetes
+        // GET: Quests
         public async Task<IActionResult> IndexAdmin()
         {
             ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Levemete = await _context.Levemetes.ToListAsync();
+            modelContainer.Quest = await _context.Quest.ToListAsync();
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (User.Identity.IsAuthenticated && userId != null)
             {
-                modelContainer.UserLevemete = await _context.UserLevemete.Where(l => l.UserID == userId).ToListAsync();
+                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserID == userId).ToListAsync();
             }
             return View(modelContainer);
         }
 
-        // GET: Levemetes/Details/5
+        // GET: Quests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -54,39 +54,39 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.LevemeteID == id);
-            if (levemete == null)
+            var quest = await _context.Quest
+                .SingleOrDefaultAsync(m => m.QuestID == id);
+            if (quest == null)
             {
                 return NotFound();
             }
 
-            return View(levemete);
+            return View(quest);
         }
 
-        // GET: Levemetes/Create
+        // GET: Quests/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Levemetes/Create
+        // POST: Quests/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Level")] Levemete levemete)
+        public async Task<IActionResult> Create([Bind("QuestID,QuestName,QuestLevel")] Quest quest)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(levemete);
+                _context.Add(quest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(levemete);
+            return View(quest);
         }
 
-        // GET: Levemetes/Edit/5
+        // GET: Quests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,22 +94,22 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
-            if (levemete == null)
+            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestID == id);
+            if (quest == null)
             {
                 return NotFound();
             }
-            return View(levemete);
+            return View(quest);
         }
 
-        // POST: Levemetes/Edit/5
+        // POST: Quests/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,IsComplete,Level")] Levemete levemete)
+        public async Task<IActionResult> Edit(int id, [Bind("QuestID,QuestName,QuestLevel")] Quest quest)
         {
-            if (id != levemete.LevemeteID)
+            if (id != quest.QuestID)
             {
                 return NotFound();
             }
@@ -118,12 +118,12 @@ namespace ffxivList.Controllers
             {
                 try
                 {
-                    _context.Update(levemete);
+                    _context.Update(quest);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LevemeteExists(levemete.LevemeteID))
+                    if (!QuestExists(quest.QuestID))
                     {
                         return NotFound();
                     }
@@ -134,10 +134,10 @@ namespace ffxivList.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(levemete);
+            return View(quest);
         }
 
-        // GET: Levemetes/Delete/5
+        // GET: Quests/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,30 +145,30 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.LevemeteID == id);
-            if (levemete == null)
+            var quest = await _context.Quest
+                .SingleOrDefaultAsync(m => m.QuestID == id);
+            if (quest == null)
             {
                 return NotFound();
             }
 
-            return View(levemete);
+            return View(quest);
         }
 
-        // POST: Levemetes/Delete/5
+        // POST: Quests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
-            _context.Levemetes.Remove(levemete);
+            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestID == id);
+            _context.Quest.Remove(quest);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
-        private bool LevemeteExists(int id)
+        private bool QuestExists(int id)
         {
-            return _context.Levemetes.Any(e => e.LevemeteID == id);
+            return _context.Quest.Any(e => e.QuestID == id);
         }
     }
 }

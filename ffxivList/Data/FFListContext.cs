@@ -12,16 +12,29 @@ namespace ffxivList.Data
 
         public DbSet<Levemete> Levemetes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Quest> Quest { get; set; }
+        public DbSet<Craft> Craft { get; set; }
+
+        public DbSet<UserLevemete> UserLevemete { get; set; }
+        public DbSet<UserQuest> UserQuest { get; set; }
+        public DbSet<UserCraft> UserCraft { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Levemete>().ToTable("Levemete");
             modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<Quest>().ToTable("Quest");
+            modelBuilder.Entity<Craft>().ToTable("Craft");
+            modelBuilder.Entity<UserLevemete>().ToTable("UserLevemete");
+            modelBuilder.Entity<UserQuest>().ToTable("UserQuest");
+            modelBuilder.Entity<UserCraft>().ToTable("UserCraft");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql("Server = localhost; database = db_fflist; uid = root; pwd = My_SQLD4t4base-;");
         }
+
+        
     }
 }

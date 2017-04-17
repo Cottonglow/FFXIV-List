@@ -1,0 +1,41 @@
+@model ffxivList.Models.ModelContainer
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Level
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Quest)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuestName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.QuestLevel)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.QuestID">Details</a>
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                {
+                        @Html.DisplayFor(modelItem => Model.UserQuest.FirstOrDefault(l => l.QuestID == item.QuestID).IsComplete)
+                    }
+                </td>
+            </tr>}
+    </tbody>
+</table>

@@ -1,4 +1,4 @@
-@model IEnumerable<ffxivList.Models.Levemete>
+@model ffxivList.Models.ModelContainer
 
 @{
     ViewData["Title"] = "Index";
@@ -9,28 +9,32 @@
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                </th>
-            <th></th>
+            <th>
+                Name
+            </th>
+            <th>
+                Level
+            </th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Levemete) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.LevemeteName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Level)
+                @Html.DisplayFor(modelItem => item.LevemeteLevel)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a>
+                <a asp-action="Details" asp-route-id="@item.LevemeteID">Details</a>
             </td>
-        </tr>
-}
+            <td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @Html.DisplayFor(modelItem => Model.UserLevemete.FirstOrDefault(l => l.LevemeteID == item.LevemeteID).IsComplete)
+                }
+            </td>
+        </tr>}
     </tbody>
 </table>

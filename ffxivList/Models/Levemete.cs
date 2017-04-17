@@ -7,8 +7,8 @@ namespace ffxivList.Models
 {
     public class Levemete
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public int Level { get; set; }
+        public int LevemeteID { get; set; }
+        public string LevemeteName { get; set; }
+        public int LevemeteLevel { get; set; }
     }
 }

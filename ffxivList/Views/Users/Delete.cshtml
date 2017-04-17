@@ -1,4 +1,4 @@
-@model ffxivList.Models.Levemete
+@model ffxivList.Models.User
 
 @{
     ViewData["Title"] = "Delete";
@@ -8,21 +8,27 @@
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Levemete</h4>
+    <h4>User</h4>
     <hr />
     <dl class="dl-horizontal">
-        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="UserId" />
         <dt>
-            @Html.DisplayNameFor(model => model.LevemeteName)
+            @Html.DisplayNameFor(model => model.UserName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LevemeteName)
+            @Html.DisplayFor(model => model.UserName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.LevemeteLevel)
+            @Html.DisplayNameFor(model => model.UserEmail)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.LevemeteLevel)
+            @Html.DisplayFor(model => model.UserEmail)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.UserRole)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.UserRole)
         </dd>
     </dl>
     

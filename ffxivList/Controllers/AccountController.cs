@@ -55,24 +55,24 @@ namespace ffxivList.Controllers
                     // Get user info from token
                     var userInfo = await client.GetTokenInfoAsync(result.IdToken);
                     
-                    User user = new User { ID = userInfo.UserId, Email = userInfo.Email, Name = userInfo.NickName };
+                    User user = new User { UserId = userInfo.UserId, UserEmail = userInfo.Email, UserName = userInfo.NickName };
 
                     using (var context = new FFListContext())
                     {             
-                        if (context.Users.Find(user.ID) == null)
+                        if (context.Users.Find(user.UserId) == null)
                         {
-                            user.Role = "User";
+                            user.UserRole = "User";
                             context.Users.Add(user);
                             context.SaveChanges();
                         }
                         else
                         {
-                            var userDetails = context.Users.Find(user.ID);
-                            user.Role = userDetails.Role;
+                            var userDetails = context.Users.Find(user.UserId);
+                            user.UserRole = userDetails.UserRole;
                         }
                     }
                     
-                    userProfile = new UserProfile() { EmailAddress = user.Email, Name = user.Name, Role = user.Role, ProfileImage = userInfo.Picture };
+                    userProfile = new UserProfile() { ProfileEmail = user.UserEmail, ProfileName = user.UserName, ProfileRole = user.UserRole, ProfileImage = userInfo.Picture };
                     
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -81,7 +81,7 @@ namespace ffxivList.Controllers
                         new Claim(ClaimTypes.Name, userInfo.NickName),
                         new Claim(ClaimTypes.Email, userInfo.Email),
                         new Claim("picture", userInfo.Picture),
-                        new Claim("role", user.Role)
+                        new Claim("role", user.UserRole)
                     }, CookieAuthenticationDefaults.AuthenticationScheme));
 
                     // Sign user into cookie middleware
@@ -126,9 +126,9 @@ namespace ffxivList.Controllers
         public IActionResult ProfileView()
         {
             return View(new UserProfile() {
-                EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value, 
-                Role = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value,
-                Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                ProfileEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value, 
+                ProfileRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value,
+                ProfileName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
                 ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
         }
