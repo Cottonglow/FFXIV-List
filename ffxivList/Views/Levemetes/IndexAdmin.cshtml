@@ -1,6 +1,10 @@
 @model List<ffxivList.Models.Levemete>
 
-<h2>Levemete Admin</h2>
+@{
+    ViewData["Title"] = "Levemetes Admin";
+}
+
+<h2>@ViewData["Title"]</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -8,12 +12,8 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Level
-            </th>
+            <td><h4>Name</h4></td>
+            <td><h4>Level</h4></td>
         </tr>
     </thead>
     <tbody>

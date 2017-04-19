@@ -23,7 +23,14 @@ namespace ffxivList.Controllers
         {
             var userId = User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            return View(await _context.AllUserQuest.Where(u => u.UserID == userId).ToListAsync());
+            AllUserModel model = new AllUserModel()
+            {
+                AllUserQuests = await _context.AllUserQuest.Where(u => u.UserID == userId).ToListAsync(),
+                Quests = await _context.Quest.ToListAsync(),
+                User = _context.Users.Find(userId)
+            };
+
+            return View(model);
         }
 
         // POST: AllUserQuests/Edit/5
@@ -35,10 +42,26 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserQuests[0].UserID).ToListAsync();
+
                 foreach (var item in allUserQuests)
                 {
                     try
                     {
+                        var userQuest = await _context.UserQuest.AsNoTracking().Where(uq => uq.UserQuestID == item.UserQuestID).ToListAsync();
+
+                        if (item.IsComplete != userQuest[0].IsComplete)
+                        {
+                            if (item.IsComplete)
+                            {
+                                user[0].UserQuestsCompleted += 1;
+                            }
+                            else
+                            {
+                                user[0].UserQuestsCompleted -= 1;
+                            }
+                        }
+
                         _context.UserQuest.Update(new UserQuest() { QuestID = item.QuestID, IsComplete = item.IsComplete, UserQuestID = item.UserQuestID, UserID = item.UserID });
                         await _context.SaveChangesAsync();
                     }
@@ -54,129 +77,13 @@ namespace ffxivList.Controllers
                         }
                     }
                 }
+
+                _context.Users.Update(user[0]);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
             return View(allUserQuests);
-        }
-
-        // GET: AllUserQuests/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserQuest = await _context.AllUserQuest
-                .SingleOrDefaultAsync(m => m.UserQuestID == id);
-            if (allUserQuest == null)
-            {
-                return NotFound();
-            }
-
-            return View(allUserQuest);
-        }
-
-        // GET: AllUserQuests/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: AllUserQuests/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,UserQuestID,QuestID,UserID,IsComplete,QuestName,QuestLevel")] AllUserQuest allUserQuest)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(allUserQuest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(allUserQuest);
-        }
-
-        // GET: AllUserQuests/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserQuest = await _context.AllUserQuest.SingleOrDefaultAsync(m => m.UserQuestID == id);
-            if (allUserQuest == null)
-            {
-                return NotFound();
-            }
-            return View(allUserQuest);
-        }
-
-        // POST: AllUserQuests/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,UserQuestID,QuestID,UserID,IsComplete,QuestName,QuestLevel")] AllUserQuest allUserQuest)
-        {
-            if (id != allUserQuest.UserQuestID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(allUserQuest);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AllUserQuestExists(allUserQuest.UserQuestID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return View(allUserQuest);
-        }
-
-        // GET: AllUserQuests/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserQuest = await _context.AllUserQuest
-                .SingleOrDefaultAsync(m => m.UserQuestID == id);
-            if (allUserQuest == null)
-            {
-                return NotFound();
-            }
-
-            return View(allUserQuest);
-        }
-
-        // POST: AllUserQuests/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var allUserQuest = await _context.AllUserQuest.SingleOrDefaultAsync(m => m.UserQuestID == id);
-            _context.AllUserQuest.Remove(allUserQuest);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
         }
 
         private bool AllUserQuestExists(int id)

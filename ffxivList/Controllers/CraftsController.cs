@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,6 @@ namespace ffxivList.Controllers
     public class CraftsController : Controller
     {
         private readonly FFListContext _context;
-        ModelContainer modelContainer;
 
         public CraftsController(FFListContext context)
         {
@@ -21,17 +21,15 @@ namespace ffxivList.Controllers
         // GET: Crafts
         public async Task<IActionResult> Index()
         {
-            modelContainer = new ModelContainer();
-            modelContainer.Craft = await _context.Craft.ToListAsync();
-            return View(modelContainer);
+            List<Craft> crafts = await _context.Craft.ToListAsync();
+            return View(crafts);
         }
         
         // GET: Crafts
         public async Task<IActionResult> IndexAdmin()
         {
-            ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Craft = await _context.Craft.ToListAsync();
-            return View(modelContainer);
+            List<Craft> crafts = await _context.Craft.ToListAsync();
+            return View(crafts);
         }
 
         // GET: Crafts/Details/5
@@ -68,8 +66,26 @@ namespace ffxivList.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(craft);
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+
+                Craft c = await _context.Craft.AsNoTracking().LastAsync();
+
+                List<User> users = await _context.Users.AsNoTracking().ToListAsync();
+
+                foreach (var user in users)
+                {
+                    _context.UserCraft.Add(new UserCraft()
+                    {
+                        IsComplete = false,
+                        CraftID = c.CraftID,
+                        UserID = user.UserId
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("IndexAdmin");
             }
             return View(craft);
         }
@@ -120,7 +136,7 @@ namespace ffxivList.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("IndexAdmin");
             }
             return View(craft);
         }
@@ -151,17 +167,12 @@ namespace ffxivList.Controllers
             var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftID == id);
             _context.Craft.Remove(craft);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("IndexAdmin");
         }
 
         private bool CraftExists(int id)
         {
             return _context.Craft.Any(e => e.CraftID == id);
-        }
-
-        private bool UserCraftExists(int id)
-        {
-            return _context.UserCraft.Any(e => e.UserCraftID == id);
         }
     }
 }

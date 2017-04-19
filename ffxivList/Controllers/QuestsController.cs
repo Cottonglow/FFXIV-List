@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -77,7 +78,25 @@ namespace ffxivList.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(quest);
+
                 await _context.SaveChangesAsync();
+
+                Quest q = await _context.Quest.AsNoTracking().LastAsync();
+
+                List<User> users = await _context.Users.AsNoTracking().ToListAsync();
+
+                foreach (var user in users)
+                {
+                    _context.UserQuest.Add(new UserQuest()
+                    {
+                        IsComplete = false,
+                        QuestID = q.QuestID,
+                        UserID = user.UserId
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
             return View(quest);

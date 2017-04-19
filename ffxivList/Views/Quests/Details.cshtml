@@ -1,23 +1,22 @@
 @model ffxivList.Models.Quest
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Quest Details";
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>Quest</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.QuestName)
+            Name
         </dt>
         <dd>
             @Html.DisplayFor(model => model.QuestName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.QuestLevel)
+            Level
         </dt>
         <dd>
             @Html.DisplayFor(model => model.QuestLevel)
@@ -26,5 +25,5 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.QuestID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="IndexAdmin">Back to List</a>
 </div>

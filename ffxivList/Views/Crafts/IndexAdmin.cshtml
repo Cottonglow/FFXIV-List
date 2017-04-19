@@ -1,10 +1,10 @@
-@model ffxivList.Models.ModelContainer
+@model List<ffxivList.Models.Craft>
 
 @{
-    ViewData["Title"] = "Index Admin";
+    ViewData["Title"] = "Crafts Admin";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,16 +12,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Level
-            </th>
+            <td><h4>Name</h4></td>
+            <td><h4>Level</h4></td>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Craft)
+        @foreach (var item in Model)
         {
             <tr>
                 <td>
@@ -29,9 +25,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CraftLevel)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => Model.UserCraft.FirstOrDefault(l => l.CraftID == item.CraftID).IsComplete)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CraftID">Edit</a> |

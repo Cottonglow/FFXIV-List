@@ -1,28 +1,21 @@
 @model IEnumerable<ffxivList.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users Admin";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserEmail)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserRole)
-                </th>
-            <th></th>
-        </tr>
+    <tr>
+        <td><h4>Name</h4></td>
+        <td><h4>Email</h4></td>
+        <td><h4>Role</h4></td>
+        <td><h4>Levemetes Complete</h4></td>
+        <td><h4>Crafts Complete</h4></td>
+        <td><h4>Quests Complete</h4></td>
+    </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
@@ -35,6 +28,15 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserRole)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserLevemetesCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserCraftsCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserQuestsCompleted)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |

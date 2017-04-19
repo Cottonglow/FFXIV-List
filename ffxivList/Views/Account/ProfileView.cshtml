@@ -4,7 +4,7 @@
     <div class="col-md-12">
         <div class="row">
             <h2>@Model.ProfileName Profile</h2>
-
+            <hr/>
             <div class="col-md-2">
                 <img src="@Model.ProfileImage"
                      alt="" class="img-rounded img-responsive" />
@@ -15,6 +15,15 @@
                 </p>
                 <p>
                     <i class="glyphicon glyphicon-pawn"></i> @Model.ProfileRole
+                </p>
+                <p>
+                    Levemetes Completed: @Model.LevemetesCompleted/@Model.LevemetesTotal
+                </p>
+                <p>
+                    Crafts Completed: @Model.CraftsCompleted/@Model.CraftsTotal
+                </p>
+                <p>
+                    Quests Completed: @Model.QuestsCompleted/@Model.QuestsTotal
                 </p>
             </div>
         </div>

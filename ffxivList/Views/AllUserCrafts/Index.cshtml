@@ -1,40 +1,42 @@
-@model List<ffxivList.Models.AllUserCraft>
+@model ffxivList.Models.AllUserModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Crafts";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
+<h4>Progress: @Model.User.UserCraftsCompleted / @Model.Crafts.Count</h4>
 
 <form asp-controller="AllUserCrafts" asp-action="Index" method="post" role="form">
     <table class="table">
+        <thead>
+            <tr>
+                <td><h4>Name</h4></td>
+                <td><h4>Level</h4></td>
+                <td><h4>Completed</h4></td>
+            </tr>
+        </thead>
         <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                <tr>
+        @for (int i = 0; i < Model.AllUserCrafts.Count(); i++)
+        {
+            <tr>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => Model[i].CraftName)
-                        <input asp-for="@Model[i].CraftName" type="hidden" />
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model[i].CraftLevel)
-                        <input asp-for="@Model[i].CraftLevel" type="hidden" />
-                    </td>
-                    <td>
-                        <input asp-for="@Model[i].IsComplete" type="checkbox" />
-                    </td>
-                    <input asp-for="@Model[i].CraftID" type="hidden" />
-                    <input asp-for="@Model[i].UserCraftID" type="hidden" />
-                    <input asp-for="@Model[i].UserID" type="hidden" />
-                    @*<td>
-                            <a asp-action="Edit" asp-route-id="@item.UserCraftID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.UserCraftID">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.UserCraftID">Delete</a>
-                        </td>
-                        <input asp-for="@Model.UserCraft.IsComplete" type="checkbox" />*@
-                </tr>
-            }
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserCrafts[i].CraftName)
+                    <input asp-for="@Model.AllUserCrafts[i].CraftName" type="hidden"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserCrafts[i].CraftLevel)
+                    <input asp-for="@Model.AllUserCrafts[i].CraftLevel" type="hidden"/>
+                </td>
+                <td>
+                    <input asp-for="@Model.AllUserCrafts[i].IsComplete" type="checkbox"/>
+                </td>
+                <input asp-for="@Model.AllUserCrafts[i].CraftID" type="hidden"/>
+                <input asp-for="@Model.AllUserCrafts[i].UserCraftID" type="hidden"/>
+                <input asp-for="@Model.AllUserCrafts[i].UserID" type="hidden"/>
+            </tr>
+        }
         </tbody>
     </table>
     <input type="submit" value="Save" class="btn btn-default" />

@@ -22,8 +22,15 @@ namespace ffxivList.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value;
-            
-            return View(await _context.AllUserCraft.Where(u => u.UserID == userId).ToListAsync());
+
+            AllUserModel model = new AllUserModel()
+            {
+                AllUserCrafts = await _context.AllUserCraft.Where(u => u.UserID == userId).ToListAsync(),
+                Crafts = await _context.Craft.ToListAsync(),
+                User = _context.Users.Find(userId)
+            };
+
+            return View(model);
         }
 
         // POST: AllUserCrafts/Edit/5
@@ -31,14 +38,30 @@ namespace ffxivList.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(List<AllUserCraft> allUserCraft)
+        public async Task<IActionResult> Index(List<AllUserCraft> allUserCrafts)
         {
             if (ModelState.IsValid)
             {
-                foreach (var item in allUserCraft)
+                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserCrafts[0].UserID).ToListAsync();
+
+                foreach (var item in allUserCrafts)
                 {
                     try
                     {
+                        var userCraft = await _context.UserCraft.AsNoTracking().Where(uq => uq.UserCraftID == item.UserCraftID).ToListAsync();
+
+                        if (item.IsComplete != userCraft[0].IsComplete)
+                        {
+                            if (item.IsComplete)
+                            {
+                                user[0].UserCraftsCompleted += 1;
+                            }
+                            else
+                            {
+                                user[0].UserCraftsCompleted -= 1;
+                            }
+                        }
+
                         _context.UserCraft.Update(new UserCraft() { CraftID = item.CraftID, IsComplete = item.IsComplete, UserCraftID = item.UserCraftID, UserID = item.UserID });
                         await _context.SaveChangesAsync();
                     }
@@ -54,131 +77,15 @@ namespace ffxivList.Controllers
                         }
                     }
                 }
-                return RedirectToAction("Index");
-            }
-            return View(allUserCraft);
-        }
 
-        // GET: AllUserCrafts/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserCraft = await _context.AllUserCraft
-                .SingleOrDefaultAsync(m => m.UserCraftID == id);
-            if (allUserCraft == null)
-            {
-                return NotFound();
-            }
-
-            return View(allUserCraft);
-        }
-
-        // GET: AllUserCrafts/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: AllUserCrafts/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserCraftID,UserCraftID,CraftID,UserID,IsComplete,CraftName,CraftLevel")] AllUserCraft allUserCraft)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(allUserCraft);
+                _context.Users.Update(user[0]);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
-            return View(allUserCraft);
+            return View(allUserCrafts);
         }
-
-        // GET: AllUserCrafts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserCraft = await _context.AllUserCraft.SingleOrDefaultAsync(m => m.UserCraftID == id);
-            if (allUserCraft == null)
-            {
-                return NotFound();
-            }
-            return View(allUserCraft);
-        }
-
-        // POST: AllUserCrafts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserCraftID,UserCraftID,CraftID,UserID,IsComplete,CraftName,CraftLevel")] AllUserCraft allUserCraft)
-        {
-            if (id != allUserCraft.UserCraftID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(allUserCraft);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AllUserCraftExists(allUserCraft.UserCraftID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return View(allUserCraft);
-        }
-
-        // GET: AllUserCrafts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var allUserCraft = await _context.AllUserCraft
-                .SingleOrDefaultAsync(m => m.UserCraftID == id);
-            if (allUserCraft == null)
-            {
-                return NotFound();
-            }
-
-            return View(allUserCraft);
-        }
-
-        // POST: AllUserCrafts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var allUserCraft = await _context.AllUserCraft.SingleOrDefaultAsync(m => m.UserCraftID == id);
-            _context.AllUserCraft.Remove(allUserCraft);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
+        
         private bool AllUserCraftExists(int id)
         {
             return _context.AllUserCraft.Any(e => e.UserCraftID == id);

@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using RestSharp;
 
 
 namespace ffxivList.Controllers
@@ -19,7 +22,6 @@ namespace ffxivList.Controllers
     public class AccountController : Controller
     {
         private readonly Auth0Settings _auth0Settings;
-        private UserProfile userProfile;
 
         public AccountController(IOptions<Auth0Settings> auth0Settings)
         {
@@ -55,23 +57,65 @@ namespace ffxivList.Controllers
                     var userInfo = await client.GetTokenInfoAsync(result.IdToken);
                     
                     User user = new User { UserId = userInfo.UserId, UserEmail = userInfo.Email, UserName = userInfo.NickName };
-
+                    
                     using (var context = new FFListContext())
-                    {             
+                    {
+                        List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
+                        List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
+                        List<Craft> crafts = await context.Craft.AsNoTracking().ToListAsync();
+
                         if (context.Users.Find(user.UserId) == null)
                         {
                             user.UserRole = "User";
+                            user.UserCraftsCompleted = 0;
+                            user.UserLevemetesCompleted = 0;
+                            user.UserQuestsCompleted = 0;
+
                             context.Users.Add(user);
-                            context.SaveChanges();
+                            
+                            foreach (var leve in levemetes)
+                            {
+                                context.UserLevemete.Add(
+                                    new UserLevemete()
+                                    {
+                                        IsComplete = false,
+                                        LevemeteID = leve.LevemeteID,
+                                        UserID = user.UserId
+                                    });
+                            }
+
+                            foreach (var quest in quests)
+                            {
+                                context.UserQuest.Add(
+                                    new UserQuest()
+                                    {
+                                        IsComplete = false,
+                                        QuestID = quest.QuestID,
+                                        UserID = user.UserId
+                                    });
+                            }
+
+                            foreach (var craft in crafts)
+                            {
+                                context.UserCraft.Add(
+                                    new UserCraft()
+                                    {
+                                        IsComplete = false,
+                                        CraftID = craft.CraftID,
+                                        UserID = user.UserId
+                                    });
+                            }
                         }
                         else
                         {
                             var userDetails = context.Users.Find(user.UserId);
                             user.UserRole = userDetails.UserRole;
+                            user.UserCraftsCompleted = userDetails.UserCraftsCompleted;
+                            user.UserQuestsCompleted = userDetails.UserQuestsCompleted;
+                            user.UserLevemetesCompleted = userDetails.UserLevemetesCompleted;
                         }
+                        context.SaveChanges();
                     }
-                    
-                    userProfile = new UserProfile() { ProfileEmail = user.UserEmail, ProfileName = user.UserName, ProfileRole = user.UserRole, ProfileImage = userInfo.Picture };
                     
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -108,6 +152,39 @@ namespace ffxivList.Controllers
             return new ChallengeResult("Auth0", properties);
         }
 
+        [HttpGet]
+        public IActionResult SignUp(string returnUrl = "/")
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult SignUp(SignUp vm, string returnUrl = null)
+        {
+            try
+            {
+                var client = new RestClient("https://cottonglow.eu.auth0.com/dbconnections/signup");
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("content-type", "application/json");
+                request.AddParameter("application/json",
+                    "{\"client_id\": \"UyAKTB5gteDVhvEp4oq1t0zg1PrhsRlF\",\"email\": \"$('#signup-email').val()\",\"password\": \"$('#signup-password').val()\",\"user_metadata\": {\"name\": \"john\",\"color\": \"red\"}}",
+                    ParameterType.RequestBody);
+                // execute the request
+                client.ExecuteAsync(request, response =>
+                {
+                    var content = response.Content;
+                });
+
+                return RedirectToLocal(returnUrl);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message);
+            }
+            return View(vm);
+        }
+
         [Authorize]
         public async Task Logout()
         {
@@ -122,14 +199,38 @@ namespace ffxivList.Controllers
         }
 
         [Authorize]
-        public IActionResult ProfileView()
+        public async Task<IActionResult> ProfileView()
         {
-            return View(new UserProfile() {
-                ProfileEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value, 
-                ProfileRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value,
-                ProfileName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
-                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
-            });
+            UserProfile userProfile = new UserProfile();
+
+            using (var context = new FFListContext())
+            {
+                List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
+                List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
+                List<Craft> crafts = await context.Craft.AsNoTracking().ToListAsync();
+                var user = context.Users.Find(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+
+                userProfile = new UserProfile()
+                {
+                    ProfileEmail = user.UserEmail,
+                    ProfileName = user.UserName,
+                    ProfileRole = user.UserRole,
+                    ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
+                    LevemetesCompleted = user.UserLevemetesCompleted,
+                    LevemetesTotal = levemetes.Count,
+                    CraftsCompleted = user.UserCraftsCompleted,
+                    CraftsTotal = crafts.Count,
+                    QuestsCompleted = user.UserQuestsCompleted,
+                    QuestsTotal = quests.Count
+                };
+                //return View(new UserProfile() {
+                //    ProfileEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value, 
+                //    ProfileRole = User.Claims.FirstOrDefault(c => c.Type == "role")?.Value,
+                //    ProfileName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                //    ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
+                //});
+            }
+            return View(userProfile);
         }
 
         /// <summary>

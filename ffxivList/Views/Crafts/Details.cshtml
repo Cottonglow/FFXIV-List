@@ -1,23 +1,22 @@
 @model ffxivList.Models.Craft
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Craft Details";
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>Craft</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.CraftName)
+            Name
         </dt>
         <dd>
             @Html.DisplayFor(model => model.CraftName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.CraftLevel)
+            Level
         </dt>
         <dd>
             @Html.DisplayFor(model => model.CraftLevel)
@@ -26,5 +25,5 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.CraftID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="IndexAdmin">Back to List</a>
 </div>

@@ -1,25 +1,24 @@
 @model ffxivList.Models.Levemete
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Levemete";
 }
 
 <h2>Delete</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Are you sure you want to delete this levemete?</h3>
 <div>
-    <h4>Levemete</h4>
     <hr />
     <dl class="dl-horizontal">
-        <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="LevemeteID" />
         <dt>
-            @Html.DisplayNameFor(model => model.LevemeteName)
+           Name
         </dt>
         <dd>
             @Html.DisplayFor(model => model.LevemeteName)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.LevemeteLevel)
+            Level
         </dt>
         <dd>
             @Html.DisplayFor(model => model.LevemeteLevel)
@@ -29,7 +28,7 @@
     <form asp-action="Delete">
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
-            <a asp-action="Index">Back to List</a>
+            <a asp-action="IndexAdmin">Back to List</a>
         </div>
     </form>
 </div>
