@@ -12,11 +12,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ffxivList
 {
     public class Startup
     {
+        private OpenIdConnectOptions _options;
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -39,6 +42,51 @@ namespace ffxivList
             // Add authentication services
             services.AddAuthentication(
                 options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Configure OIDC
+            services.Configure<OpenIdConnectOptions>(options =>
+            {
+                // Specify Authentication Scheme
+                options.AuthenticationScheme = "Auth0";
+
+                // Set the authority to your Auth0 domain
+                options.Authority = $"https://{Configuration["auth0:domain"]}";
+
+                // Configure the Auth0 Client ID and Client Secret
+                options.ClientId = Configuration["auth0:clientId"];
+                options.ClientSecret = Configuration["auth0:clientSecret"];
+
+                // Do not automatically authenticate and challenge
+                options.AutomaticAuthenticate = false;
+                options.AutomaticChallenge = false;
+
+                // Set response type to code
+                options.ResponseType = "code";
+
+                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+                options.CallbackPath = new PathString("/signin-auth0");
+
+                // Configure the Claims Issuer to be Auth0
+                options.ClaimsIssuer = "Auth0";
+
+                options.SaveTokens = true;
+                
+                options.Events = new OpenIdConnectEvents
+                {
+                    // handle the logout redirection 
+                    OnRedirectToIdentityProviderForSignOut = HandleRedirectToIdentityProviderForSignOut,
+                    OnTicketReceived = OnTicketReceived
+                };
+
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("name");
+                options.Scope.Add("email");
+                options.Scope.Add("picture");
+                options.Scope.Add("role");
+                options.Scope.Add("username");
+            });
 
             // Add framework services.
             services.AddMvc();
@@ -72,8 +120,39 @@ namespace ffxivList
             return Task.CompletedTask;
         }
 
+        public Task OnTicketReceived(TicketReceivedContext context)
+        {
+            // Get the ClaimsIdentity
+             var identity = context.Principal.Identity as ClaimsIdentity;
+             if (identity != null)
+             {
+                 // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
+                 if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
+                     identity.HasClaim(c => c.Type == "name"))
+                     identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
+ 
+                 // Check if token names are stored in Properties
+                 if (context.Properties.Items.ContainsKey(".TokenNames"))
+                 {
+                     // Token names a semicolon separated
+                     string[] tokenNames = context.Properties.Items[".TokenNames"].Split(';');
+ 
+                     // Add each token value as Claim
+                     foreach (var tokenName in tokenNames)
+                     {
+                         // Tokens are stored in a Dictionary with the Key ".Token.<token name>"
+                         string tokenValue = context.Properties.Items[$".Token.{tokenName}"];
+ 
+                         identity.AddClaim(new Claim(tokenName, tokenValue));
+                     }
+                 }
+             }
+ 
+             return Task.CompletedTask;
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, FFListContext dbContext, IOptions<Auth0Settings> auth0Settings)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, FFListContext dbContext, IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -97,94 +176,7 @@ namespace ffxivList
                 AutomaticChallenge = true
             });
 
-            // Add the OIDC middleware
-            var options = new OpenIdConnectOptions("Auth0")
-            {
-                // Set the authority to your Auth0 domain
-                Authority = $"https://{auth0Settings.Value.Domain}",
-
-                // Configure the Auth0 Client ID and Client Secret
-                ClientId = auth0Settings.Value.ClientId,
-                ClientSecret = auth0Settings.Value.ClientSecret,
-
-                // Do not automatically authenticate and challenge
-                AutomaticAuthenticate = false,
-                AutomaticChallenge = false,
-
-                // Set response type to code
-                ResponseType = "code",
-
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                CallbackPath = new PathString("/signin-auth0"),
-
-                // Configure the Claims Issuer to be Auth0
-                ClaimsIssuer = "Auth0",
-
-                // Saves tokens to the AuthenticationProperties
-                SaveTokens = true,
-
-                Events = new OpenIdConnectEvents
-                {
-                    OnTicketReceived = context =>
-                    {
-                        // Get the ClaimsIdentity
-                        var identity = context.Principal.Identity as ClaimsIdentity;
-                        if (identity != null)
-                        {
-                            // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
-                            if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
-                                identity.HasClaim(c => c.Type == "name"))
-                                identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
-                            // Check if token names are stored in Properties
-                            if (context.Properties.Items.ContainsKey(".TokenNames"))
-                            {
-                                // Token names a semicolon separated
-                                string[] tokenNames = context.Properties.Items[".TokenNames"].Split(';');
-
-                                // Add each token value as Claim
-                                foreach (var tokenName in tokenNames)
-                                {
-                                    // Tokens are stored in a Dictionary with the Key ".Token.<token name>"
-                                    string tokenValue = context.Properties.Items[$".Token.{tokenName}"];
-
-                                    identity.AddClaim(new Claim(tokenName, tokenValue));
-                                }
-                            }
-                        }
-
-                        return Task.CompletedTask;
-                    },
-                    // handle the logout redirection 
-                    OnRedirectToIdentityProviderForSignOut = (context) =>
-                    {
-                        var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
-
-                        var postLogoutUri = context.Properties.RedirectUri;
-                        if (!string.IsNullOrEmpty(postLogoutUri))
-                        {
-                            if (postLogoutUri.StartsWith("/"))
-                            {
-                                // transform to absolute
-                                var request = context.Request;
-                                postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
-                            }
-                            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
-                        }
-
-                        context.Response.Redirect(logoutUri);
-                        context.HandleResponse();
-
-                        return Task.CompletedTask;
-                    }
-                }
-            };
-            options.Scope.Clear();
-            options.Scope.Add("openid");
-            options.Scope.Add("name");
-            options.Scope.Add("email");
-            options.Scope.Add("picture");
-            app.UseOpenIdConnectAuthentication(options);
+            app.UseOpenIdConnectAuthentication(options.Value);
 
             app.UseMvc(routes =>
             {
