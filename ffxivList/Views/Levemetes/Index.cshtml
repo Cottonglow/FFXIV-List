@@ -1,36 +1,31 @@
-@model IEnumerable<ffxivList.Models.Levemete>
+@model List<ffxivList.Models.Levemete>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Levemetes";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                </th>
-            <th></th>
+            <th>
+                Name
+            </th>
+            <th>
+                Level
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.LevemeteName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Level)
+                @Html.DisplayFor(modelItem => item.LevemeteLevel)
             </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a>
-            </td>
-        </tr>
-}
+        </tr>}
     </tbody>
 </table>

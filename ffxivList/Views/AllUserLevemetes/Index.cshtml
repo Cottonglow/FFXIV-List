@@ -1,0 +1,49 @@
+@model ffxivList.Models.AllUserModel
+
+@{
+    ViewData["Title"] = "Levemetes";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Progress: @Model.User.UserLevemetesCompleted / @Model.Levemetes.Count</h4>
+
+<form asp-controller="AllUserLevemetes" asp-action="Index" method="post" role="form">
+    <table class="table">
+        <thead>
+        <tr>
+            <td><h4>Name</h4></td>
+            <td><h4>Level</h4></td>
+            <td><h4>Completed</h4></td>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.AllUserLevemetes.Count(); i++)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserLevemetes[i].LevemeteName)
+                    <input asp-for="@Model.AllUserLevemetes[i].LevemeteName" type="hidden"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserLevemetes[i].LevemeteLevel)
+                    <input asp-for="@Model.AllUserLevemetes[i].LevemeteLevel" type="hidden"/>
+                </td>
+                <td>
+                    <input asp-for="@Model.AllUserLevemetes[i].IsComplete" type="checkbox"/>
+                </td>
+                <input asp-for="@Model.AllUserLevemetes[i].LevemeteID" type="hidden"/>
+                <input asp-for="@Model.AllUserLevemetes[i].UserLevemeteID" type="hidden"/>
+                <input asp-for="@Model.AllUserLevemetes[i].UserID" type="hidden"/>
+                @*<td>
+                            <a asp-action="Edit" asp-route-id="@item.UserCraftID">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.UserCraftID">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.UserCraftID">Delete</a>
+                        </td>
+                        <input asp-for="@Model.UserCraft.IsComplete" type="checkbox" />*@
+            </tr>
+        }
+        </tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-default" />
+</form>

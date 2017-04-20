@@ -1,0 +1,42 @@
+@model ffxivList.Models.Quest
+
+@{
+    ViewData["Title"] = "Edit Quest";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit">
+    <div class="form-horizontal">
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="QuestID" />
+        <div class="form-group">
+            <label asp-for="QuestName" class="col-md-2 control-label">Name</label>
+            <div class="col-md-10">
+                <input asp-for="QuestName" class="form-control" />
+                <span asp-validation-for="QuestName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="QuestLevel" class="col-md-2 control-label">Level</label>
+            <div class="col-md-10">
+                <input asp-for="QuestLevel" class="form-control" />
+                <span asp-validation-for="QuestLevel" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="IndexAdmin">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

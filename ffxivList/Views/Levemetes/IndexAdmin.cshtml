@@ -1,10 +1,10 @@
-@model IEnumerable<ffxivList.Models.Levemete>
+@model List<ffxivList.Models.Levemete>
 
 @{
-    ViewData["Title"] = "Index Admin";
+    ViewData["Title"] = "Levemetes Admin";
 }
 
-<h2>Index</h2>
+<h2>@ViewData["Title"]</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,28 +12,23 @@
 <table class="table">
     <thead>
         <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Level)
-                </th>
-            <th></th>
+            <td><h4>Name</h4></td>
+            <td><h4>Level</h4></td>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.LevemeteName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Level)
+                @Html.DisplayFor(modelItem => item.LevemeteLevel)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.LevemeteID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.LevemeteID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.LevemeteID">Delete</a>
             </td>
         </tr>
 }

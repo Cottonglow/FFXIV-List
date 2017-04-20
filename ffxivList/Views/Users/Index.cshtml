@@ -1,0 +1,49 @@
+@model IEnumerable<ffxivList.Models.User>
+
+@{
+    ViewData["Title"] = "Users Admin";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+    <tr>
+        <td><h4>Name</h4></td>
+        <td><h4>Email</h4></td>
+        <td><h4>Role</h4></td>
+        <td><h4>Levemetes Complete</h4></td>
+        <td><h4>Crafts Complete</h4></td>
+        <td><h4>Quests Complete</h4></td>
+    </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserRole)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserLevemetesCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserCraftsCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.UserQuestsCompleted)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

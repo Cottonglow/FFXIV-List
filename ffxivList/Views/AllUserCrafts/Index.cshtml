@@ -1,0 +1,43 @@
+@model ffxivList.Models.AllUserModel
+
+@{
+    ViewData["Title"] = "Crafts";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Progress: @Model.User.UserCraftsCompleted / @Model.Crafts.Count</h4>
+
+<form asp-controller="AllUserCrafts" asp-action="Index" method="post" role="form">
+    <table class="table">
+        <thead>
+            <tr>
+                <td><h4>Name</h4></td>
+                <td><h4>Level</h4></td>
+                <td><h4>Completed</h4></td>
+            </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.AllUserCrafts.Count(); i++)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserCrafts[i].CraftName)
+                    <input asp-for="@Model.AllUserCrafts[i].CraftName" type="hidden"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserCrafts[i].CraftLevel)
+                    <input asp-for="@Model.AllUserCrafts[i].CraftLevel" type="hidden"/>
+                </td>
+                <td>
+                    <input asp-for="@Model.AllUserCrafts[i].IsComplete" type="checkbox"/>
+                </td>
+                <input asp-for="@Model.AllUserCrafts[i].CraftID" type="hidden"/>
+                <input asp-for="@Model.AllUserCrafts[i].UserCraftID" type="hidden"/>
+                <input asp-for="@Model.AllUserCrafts[i].UserID" type="hidden"/>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-default" />
+</form>

@@ -1,12 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
+using System.Security.Claims;
 
 namespace ffxivList.Controllers
 {
@@ -16,19 +15,21 @@ namespace ffxivList.Controllers
 
         public LevemetesController(FFListContext context)
         {
-            _context = context;    
+            _context = context;     
         }
 
         // GET: Levemetes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Levemetes.ToListAsync());
+            List<Levemete> levemete = await _context.Levemetes.ToListAsync();
+            return View(levemete);
         }
 
         // GET: Levemetes
         public async Task<IActionResult> IndexAdmin()
         {
-            return View(await _context.Levemetes.ToListAsync());
+            List<Levemete> levemete = await _context.Levemetes.ToListAsync();
+            return View(levemete);
         }
 
         // GET: Levemetes/Details/5
@@ -40,7 +41,7 @@ namespace ffxivList.Controllers
             }
 
             var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.ID == id);
+                .SingleOrDefaultAsync(m => m.LevemeteID == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -60,13 +61,31 @@ namespace ffxivList.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Level")] Levemete levemete)
+        public async Task<IActionResult> Create([Bind("LevemeteID,LevemeteName,LevemeteLevel")] Levemete levemete)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(levemete);
+                
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+
+                Levemete leve = await _context.Levemetes.AsNoTracking().LastAsync();
+
+                List<User> users = await _context.Users.AsNoTracking().ToListAsync();
+
+                foreach (var user in users)
+                {
+                    _context.UserLevemete.Add(new UserLevemete()
+                    {
+                        IsComplete = false,
+                        LevemeteID = leve.LevemeteID,
+                        UserID = user.UserId
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("IndexAdmin");
             }
             return View(levemete);
         }
@@ -79,7 +98,7 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.ID == id);
+            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -92,9 +111,9 @@ namespace ffxivList.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,IsComplete,Level")] Levemete levemete)
+        public async Task<IActionResult> Edit(int id, [Bind("LevemeteID,LevemeteName,LevemeteIsComplete,LevemeteLevel")] Levemete levemete)
         {
-            if (id != levemete.ID)
+            if (id != levemete.LevemeteID)
             {
                 return NotFound();
             }
@@ -108,7 +127,7 @@ namespace ffxivList.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LevemeteExists(levemete.ID))
+                    if (!LevemeteExists(levemete.LevemeteID))
                     {
                         return NotFound();
                     }
@@ -117,7 +136,7 @@ namespace ffxivList.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("IndexAdmin");
             }
             return View(levemete);
         }
@@ -131,7 +150,7 @@ namespace ffxivList.Controllers
             }
 
             var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.ID == id);
+                .SingleOrDefaultAsync(m => m.LevemeteID == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -145,15 +164,15 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.ID == id);
+            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
             _context.Levemetes.Remove(levemete);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("IndexAdmin");
         }
 
         private bool LevemeteExists(int id)
         {
-            return _context.Levemetes.Any(e => e.ID == id);
+            return _context.Levemetes.Any(e => e.LevemeteID == id);
         }
     }
 }

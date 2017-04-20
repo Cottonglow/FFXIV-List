@@ -1,0 +1,43 @@
+@model ffxivList.Models.AllUserModel
+
+@{
+    ViewData["Title"] = "Quests";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Progress: @Model.User.UserQuestsCompleted / @Model.Quests.Count</h4>
+
+<form asp-controller="AllUserQuests" asp-action="Index" method="post" role="form">
+    <table class="table">
+        <thead>
+            <tr>
+                <td><h4>Name</h4></td>
+                <td><h4>Level</h4></td>
+                <td><h4>Completed</h4></td>
+            </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.AllUserQuests.Count(); i++)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserQuests[i].QuestName)
+                    <input asp-for="@Model.AllUserQuests[i].QuestName" type="hidden"/>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.AllUserQuests[i].QuestLevel)
+                    <input asp-for="@Model.AllUserQuests[i].QuestLevel" type="hidden"/>
+                </td>
+                <td>
+                    <input asp-for="@Model.AllUserQuests[i].IsComplete" type="checkbox"/>
+                </td>
+                <input asp-for="@Model.AllUserQuests[i].QuestID" type="hidden"/>
+                <input asp-for="@Model.AllUserQuests[i].UserQuestID" type="hidden"/>
+                <input asp-for="@Model.AllUserQuests[i].UserID" type="hidden"/>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <input type="submit" value="Save" class="btn btn-default" />
+</form>
