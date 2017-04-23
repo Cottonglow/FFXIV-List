@@ -1,21 +1,16 @@
-﻿using Auth0.AuthenticationApi;
-using Auth0.AuthenticationApi.Models;
-using ffxivList.Data;
+﻿using ffxivList.Data;
 using ffxivList.Models;
-using ffxivList.ViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using RestSharp;
 
 
 namespace ffxivList.Controllers
@@ -34,22 +29,30 @@ namespace ffxivList.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            //var lockContext = HttpContext.GenerateLockContext(_options.Value, Url.Action("LoginSuccessful", "Account"));
-
-            //return View(lockContext);
             return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = Url.Action("LoginSuccessful", "Account") });
+        }
+
+        [HttpGet]
+        public IActionResult LoginExternal(string connection, string returnUrl = "/")
+        {
+            var properties = new AuthenticationProperties() { RedirectUri = returnUrl };
+
+            if (!string.IsNullOrEmpty(connection))
+                properties.Items.Add("connection", connection);
+
+            return new ChallengeResult("Auth0", properties);
         }
 
         public async Task<IActionResult> LoginSuccessful()
         {
-            using (var context = new FFListContext())
+            using (var context = new FfListContext())
             {
                 // Get user info from token
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
                 var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
                 var userName = User.Claims.FirstOrDefault(c => c.Type == "username").Value;
 
-                User user = new User { UserId = userId, UserEmail = userEmail, UserName = userName };
+                User user = new User { UserId = userId, UserName = userName };
 
                 List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
                 List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
@@ -70,8 +73,8 @@ namespace ffxivList.Controllers
                             new UserLevemete()
                             {
                                 IsComplete = false,
-                                LevemeteID = leve.LevemeteID,
-                                UserID = user.UserId
+                                LevemeteId = leve.LevemeteId,
+                                UserId = user.UserId
                             });
                     }
 
@@ -81,8 +84,8 @@ namespace ffxivList.Controllers
                             new UserQuest()
                             {
                                 IsComplete = false,
-                                QuestID = quest.QuestID,
-                                UserID = user.UserId
+                                QuestId = quest.QuestId,
+                                UserId = user.UserId
                             });
                     }
 
@@ -92,8 +95,8 @@ namespace ffxivList.Controllers
                             new UserCraft()
                             {
                                 IsComplete = false,
-                                CraftID = craft.CraftID,
-                                UserID = user.UserId
+                                CraftId = craft.CraftId,
+                                UserId = user.UserId
                             });
                     }
                 }
@@ -112,7 +115,7 @@ namespace ffxivList.Controllers
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.UserId),
                     new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.Email, user.UserEmail),
+                    new Claim(ClaimTypes.Email, userEmail),
                     new Claim("picture", User.Claims.FirstOrDefault(c => c.Type == "picture").Value),
                     new Claim("role", user.UserRole)
                 }, CookieAuthenticationDefaults.AuthenticationScheme));
@@ -122,18 +125,7 @@ namespace ffxivList.Controllers
             }
             return RedirectToLocal("/");
         }
-
-        [HttpGet]
-        public IActionResult LoginExternal(string connection, string returnUrl = "/")
-        {
-            var properties = new AuthenticationProperties() { RedirectUri = returnUrl };
-
-            if (!string.IsNullOrEmpty(connection))
-                properties.Items.Add("connection", connection);
-
-            return new ChallengeResult("Auth0", properties);
-        }
-
+        
         [Authorize]
         public async Task Logout()
         {
@@ -150,18 +142,19 @@ namespace ffxivList.Controllers
         [Authorize]
         public async Task<IActionResult> ProfileView()
         {
-            UserProfile userProfile = new UserProfile();
+            UserProfile userProfile;
 
-            using (var context = new FFListContext())
+            using (var context = new FfListContext())
             {
                 List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
                 List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
                 List<Craft> crafts = await context.Craft.AsNoTracking().ToListAsync();
                 var user = context.Users.Find(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+                string userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 userProfile = new UserProfile()
                 {
-                    ProfileEmail = user.UserEmail,
+                    ProfileEmail = userEmail,
                     ProfileName = user.UserName,
                     ProfileRole = user.UserRole,
                     ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,

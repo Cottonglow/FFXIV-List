@@ -2,7 +2,7 @@
 {
     public class Quest
     {
-        public int QuestID { get; set; }
+        public int QuestId { get; set; }
         public string QuestName { get; set; }
         public int QuestLevel { get; set; }
     }

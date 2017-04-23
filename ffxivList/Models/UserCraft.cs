@@ -2,9 +2,9 @@
 {
     public class UserCraft
     {
-        public int UserCraftID { get; set; }
-        public int CraftID { get; set; }
-        public string UserID { get; set; }
+        public int UserCraftId { get; set; }
+        public int CraftId { get; set; }
+        public string UserId { get; set; }
         public bool IsComplete { get; set; }
     }
 }

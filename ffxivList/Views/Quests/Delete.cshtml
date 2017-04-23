@@ -6,11 +6,12 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<h3>Are you sure you want to delete this quest?</h3>
+<div class="alert alert-danger" role="alert">Are you sure you want to delete this quest?</div>
+
 <div>
     <hr />
     <dl class="dl-horizontal">
-        <input type="hidden" asp-for="QuestID" />
+        <input type="hidden" asp-for="QuestId" />
         <dt>
             Name
         </dt>
@@ -26,9 +27,16 @@
     </dl>
     
     <form asp-action="Delete">
-        <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            <a asp-action="IndexAdmin">Back to List</a>
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Delete" class="btn btn-danger" />
         </div>
     </form>
+</div>
+<br/>
+<br/>
+<br/>
+<div class="btn-group" role="group" aria-label="...">
+    <a asp-action="IndexAdmin" class="btn btn-link" role="button">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.QuestId" class="btn btn-success" role="button">Edit</a>
+    <a asp-action="Details" asp-route-id="@Model.QuestId" class="btn btn-warning" role="button">Details</a>
 </div>

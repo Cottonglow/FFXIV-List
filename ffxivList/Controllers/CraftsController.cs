@@ -10,9 +10,9 @@ namespace ffxivList.Controllers
 {
     public class CraftsController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public CraftsController(FFListContext context)
+        public CraftsController(FfListContext context)
         {
             
             _context = context;    
@@ -41,7 +41,7 @@ namespace ffxivList.Controllers
             }
 
             var craft = await _context.Craft
-                .SingleOrDefaultAsync(m => m.CraftID == id);
+                .SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
                 return NotFound();
@@ -78,8 +78,8 @@ namespace ffxivList.Controllers
                     _context.UserCraft.Add(new UserCraft()
                     {
                         IsComplete = false,
-                        CraftID = c.CraftID,
-                        UserID = user.UserId
+                        CraftId = c.CraftId,
+                        UserId = user.UserId
                     });
                 }
 
@@ -98,7 +98,7 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftID == id);
+            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
                 return NotFound();
@@ -113,7 +113,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CraftID,CraftName,CraftLevel")] Craft craft)
         {
-            if (id != craft.CraftID)
+            if (id != craft.CraftId)
             {
                 return NotFound();
             }
@@ -127,7 +127,7 @@ namespace ffxivList.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CraftExists(craft.CraftID))
+                    if (!CraftExists(craft.CraftId))
                     {
                         return NotFound();
                     }
@@ -150,7 +150,7 @@ namespace ffxivList.Controllers
             }
 
             var craft = await _context.Craft
-                .SingleOrDefaultAsync(m => m.CraftID == id);
+                .SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
                 return NotFound();
@@ -164,7 +164,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftID == id);
+            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftId == id);
             _context.Craft.Remove(craft);
             await _context.SaveChangesAsync();
             return RedirectToAction("IndexAdmin");
@@ -172,7 +172,7 @@ namespace ffxivList.Controllers
 
         private bool CraftExists(int id)
         {
-            return _context.Craft.Any(e => e.CraftID == id);
+            return _context.Craft.Any(e => e.CraftId == id);
         }
     }
 }

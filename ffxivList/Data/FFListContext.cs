@@ -4,12 +4,8 @@ using System.Linq;
 
 namespace ffxivList.Data
 {
-    public class FFListContext : DbContext
+    public class FfListContext : DbContext
     {
-        //public FFListContext(DbContextOptions<FFListContext> options) : base(options)
-        //{
-        //}
-
         public DbSet<Levemete> Levemetes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Quest> Quest { get; set; }
@@ -36,9 +32,9 @@ namespace ffxivList.Data
             modelBuilder.Entity<AllUserLevemete>().ToTable("AllUserLevemete");
             modelBuilder.Entity<AllUserQuest>().ToTable("AllUserQuest");
 
-            modelBuilder.Entity<AllUserCraft>().HasKey(c => new { c.CraftID, c.UserID });
-            modelBuilder.Entity<AllUserLevemete>().HasKey(c => new { c.LevemeteID, c.UserID });
-            modelBuilder.Entity<AllUserQuest>().HasKey(c => new { c.QuestID, c.UserID });
+            modelBuilder.Entity<AllUserCraft>().HasKey(c => new { CraftID = c.CraftId, UserID = c.UserId });
+            modelBuilder.Entity<AllUserLevemete>().HasKey(c => new { LevemeteID = c.LevemeteId, UserID = c.UserId });
+            modelBuilder.Entity<AllUserQuest>().HasKey(c => new { QuestID = c.QuestId, UserID = c.UserId });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

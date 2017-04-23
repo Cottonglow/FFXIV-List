@@ -9,9 +9,9 @@ namespace ffxivList.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public UsersController(FFListContext context)
+        public UsersController(FfListContext context)
         {
             _context = context;    
         }

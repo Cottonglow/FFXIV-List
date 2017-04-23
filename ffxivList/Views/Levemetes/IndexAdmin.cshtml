@@ -3,34 +3,36 @@
 @{
     ViewData["Title"] = "Levemetes Admin";
 }
-
+<br />
 <h2>@ViewData["Title"]</h2>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary" role="button" >Create</a>
 </p>
-<table class="table">
+<table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <td><h4>Name</h4></td>
-            <td><h4>Level</h4></td>
+        <tr >
+            <th>Name</th>
+            <th>Level</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LevemeteName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LevemeteLevel)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.LevemeteID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.LevemeteID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.LevemeteID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LevemeteName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LevemeteLevel)
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <a asp-action="Edit" asp-route-id="@item.LevemeteId" class="btn btn-success" role="button" >Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.LevemeteId" class="btn btn-warning" role="button">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.LevemeteId" class="btn btn-danger" role="button" >Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

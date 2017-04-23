@@ -48,10 +48,9 @@ namespace ffxivList
 
         public static LockContext GenerateLockContext(this HttpContext httpContext, OpenIdConnectOptions options, string returnUrl = null)
         {
-            LockContext lockContext = new LockContext();
+            LockContext lockContext = new LockContext {ClientId = options.ClientId};
 
             // Set the options
-            lockContext.ClientId = options.ClientId;
 
             // retrieve the domain from the authority
             Uri authorityUri;

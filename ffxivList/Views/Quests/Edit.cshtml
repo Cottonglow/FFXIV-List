@@ -10,7 +10,7 @@
     <div class="form-horizontal">
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="QuestID" />
+    <input type="hidden" asp-for="QuestId" />
         <div class="form-group">
             <label asp-for="QuestName" class="col-md-2 control-label">Name</label>
             <div class="col-md-10">
@@ -33,8 +33,10 @@
     </div>
 </form>
 
-<div>
-    <a asp-action="IndexAdmin">Back to List</a>
+<div class="btn-group" role="group" aria-label="...">
+    <a asp-action="IndexAdmin" class="btn btn-link" role="button">Back to List</a>
+    <a asp-action="Details" asp-route-id="@Model.QuestId" class="btn btn-warning" role="button">Details</a>
+    <a asp-action="Delete" asp-route-id="@Model.QuestId" class="btn btn-danger" role="button">Delete</a>
 </div>
 
 @section Scripts {

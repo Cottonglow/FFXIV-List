@@ -5,15 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
-using System.Security.Claims;
 
 namespace ffxivList.Controllers
 {
     public class LevemetesController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public LevemetesController(FFListContext context)
+        public LevemetesController(FfListContext context)
         {
             _context = context;     
         }
@@ -41,7 +40,7 @@ namespace ffxivList.Controllers
             }
 
             var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.LevemeteID == id);
+                .SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -78,8 +77,8 @@ namespace ffxivList.Controllers
                     _context.UserLevemete.Add(new UserLevemete()
                     {
                         IsComplete = false,
-                        LevemeteID = leve.LevemeteID,
-                        UserID = user.UserId
+                        LevemeteId = leve.LevemeteId,
+                        UserId = user.UserId
                     });
                 }
 
@@ -98,7 +97,7 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
+            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -113,7 +112,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("LevemeteID,LevemeteName,LevemeteIsComplete,LevemeteLevel")] Levemete levemete)
         {
-            if (id != levemete.LevemeteID)
+            if (id != levemete.LevemeteId)
             {
                 return NotFound();
             }
@@ -127,7 +126,7 @@ namespace ffxivList.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LevemeteExists(levemete.LevemeteID))
+                    if (!LevemeteExists(levemete.LevemeteId))
                     {
                         return NotFound();
                     }
@@ -150,7 +149,7 @@ namespace ffxivList.Controllers
             }
 
             var levemete = await _context.Levemetes
-                .SingleOrDefaultAsync(m => m.LevemeteID == id);
+                .SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
                 return NotFound();
@@ -164,7 +163,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteID == id);
+            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteId == id);
             _context.Levemetes.Remove(levemete);
             await _context.SaveChangesAsync();
             return RedirectToAction("IndexAdmin");
@@ -172,7 +171,7 @@ namespace ffxivList.Controllers
 
         private bool LevemeteExists(int id)
         {
-            return _context.Levemetes.Any(e => e.LevemeteID == id);
+            return _context.Levemetes.Any(e => e.LevemeteId == id);
         }
     }
 }

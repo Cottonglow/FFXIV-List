@@ -3,10 +3,10 @@
 @{
     ViewData["Title"] = "Levemetes";
 }
-
+<br />
 <h2>@ViewData["Title"]</h2>
-
-<table class="table">
+<br />
+<table class="table table-striped table-hover">
     <thead>
         <tr>
             <th>
@@ -18,14 +18,15 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LevemeteName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LevemeteLevel)
-            </td>
-        </tr>}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LevemeteName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LevemeteLevel)
+                </td>
+            </tr>}
     </tbody>
 </table>

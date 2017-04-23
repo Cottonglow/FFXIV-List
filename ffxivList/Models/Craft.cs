@@ -2,7 +2,7 @@
 {
     public class Craft
     {
-        public int CraftID { get; set; }
+        public int CraftId { get; set; }
         public string CraftName { get; set; }
         public int CraftLevel { get; set; }
     }

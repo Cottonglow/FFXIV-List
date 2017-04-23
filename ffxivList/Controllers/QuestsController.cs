@@ -11,9 +11,9 @@ namespace ffxivList.Controllers
 {
     public class QuestsController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public QuestsController(FFListContext context)
+        public QuestsController(FfListContext context)
         {
             _context = context;    
         }
@@ -21,12 +21,11 @@ namespace ffxivList.Controllers
         // GET: Quests
         public async Task<IActionResult> Index()
         {
-            ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Quest = await _context.Quest.ToListAsync();
+            ModelContainer modelContainer = new ModelContainer {Quest = await _context.Quest.ToListAsync()};
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (User.Identity.IsAuthenticated && userId != null)
             {
-                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserID == userId).ToListAsync();
+                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserId == userId).ToListAsync();
             }
             return View(modelContainer);
         }
@@ -34,12 +33,11 @@ namespace ffxivList.Controllers
         // GET: Quests
         public async Task<IActionResult> IndexAdmin()
         {
-            ModelContainer modelContainer = new ModelContainer();
-            modelContainer.Quest = await _context.Quest.ToListAsync();
+            ModelContainer modelContainer = new ModelContainer {Quest = await _context.Quest.ToListAsync()};
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (User.Identity.IsAuthenticated && userId != null)
             {
-                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserID == userId).ToListAsync();
+                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserId == userId).ToListAsync();
             }
             return View(modelContainer);
         }
@@ -53,7 +51,7 @@ namespace ffxivList.Controllers
             }
 
             var quest = await _context.Quest
-                .SingleOrDefaultAsync(m => m.QuestID == id);
+                .SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
                 return NotFound();
@@ -90,8 +88,8 @@ namespace ffxivList.Controllers
                     _context.UserQuest.Add(new UserQuest()
                     {
                         IsComplete = false,
-                        QuestID = q.QuestID,
-                        UserID = user.UserId
+                        QuestId = q.QuestId,
+                        UserId = user.UserId
                     });
                 }
 
@@ -110,7 +108,7 @@ namespace ffxivList.Controllers
                 return NotFound();
             }
 
-            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestID == id);
+            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
                 return NotFound();
@@ -125,7 +123,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("QuestID,QuestName,QuestLevel")] Quest quest)
         {
-            if (id != quest.QuestID)
+            if (id != quest.QuestId)
             {
                 return NotFound();
             }
@@ -139,7 +137,7 @@ namespace ffxivList.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuestExists(quest.QuestID))
+                    if (!QuestExists(quest.QuestId))
                     {
                         return NotFound();
                     }
@@ -162,7 +160,7 @@ namespace ffxivList.Controllers
             }
 
             var quest = await _context.Quest
-                .SingleOrDefaultAsync(m => m.QuestID == id);
+                .SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
                 return NotFound();
@@ -176,7 +174,7 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestID == id);
+            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
             _context.Quest.Remove(quest);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -184,7 +182,7 @@ namespace ffxivList.Controllers
 
         private bool QuestExists(int id)
         {
-            return _context.Quest.Any(e => e.QuestID == id);
+            return _context.Quest.Any(e => e.QuestId == id);
         }
     }
 }

@@ -11,9 +11,9 @@ namespace ffxivList.Controllers
 {
     public class AllUserQuestsController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public AllUserQuestsController(FFListContext context)
+        public AllUserQuestsController(FfListContext context)
         {
             _context = context;    
         }
@@ -25,7 +25,7 @@ namespace ffxivList.Controllers
 
             AllUserModel model = new AllUserModel()
             {
-                AllUserQuests = await _context.AllUserQuest.Where(u => u.UserID == userId).ToListAsync(),
+                AllUserQuests = await _context.AllUserQuest.Where(u => u.UserId == userId).ToListAsync(),
                 Quests = await _context.Quest.ToListAsync(),
                 User = _context.Users.Find(userId)
             };
@@ -42,13 +42,13 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserQuests[0].UserID).ToListAsync();
+                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserQuests[0].UserId).ToListAsync();
 
                 foreach (var item in allUserQuests)
                 {
                     try
                     {
-                        var userQuest = await _context.UserQuest.AsNoTracking().Where(uq => uq.UserQuestID == item.UserQuestID).ToListAsync();
+                        var userQuest = await _context.UserQuest.AsNoTracking().Where(uq => uq.UserQuestId == item.UserQuestId).ToListAsync();
 
                         if (item.IsComplete != userQuest[0].IsComplete)
                         {
@@ -62,12 +62,12 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserQuest.Update(new UserQuest() { QuestID = item.QuestID, IsComplete = item.IsComplete, UserQuestID = item.UserQuestID, UserID = item.UserID });
+                        _context.UserQuest.Update(new UserQuest() { QuestId = item.QuestId, IsComplete = item.IsComplete, UserQuestId = item.UserQuestId, UserId = item.UserId });
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!AllUserQuestExists(item.UserQuestID))
+                        if (!AllUserQuestExists(item.UserQuestId))
                         {
                             return NotFound();
                         }
@@ -88,7 +88,7 @@ namespace ffxivList.Controllers
 
         private bool AllUserQuestExists(int id)
         {
-            return _context.AllUserQuest.Any(e => e.UserQuestID == id);
+            return _context.AllUserQuest.Any(e => e.UserQuestId == id);
         }
     }
 }

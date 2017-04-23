@@ -18,8 +18,6 @@ namespace ffxivList
 {
     public class Startup
     {
-        private OpenIdConnectOptions _options;
-
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -36,7 +34,7 @@ namespace ffxivList
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddDbContext<FFListContext>(options =>
+            services.AddDbContext<FfListContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             // Add authentication services
@@ -152,7 +150,7 @@ namespace ffxivList
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, FFListContext dbContext, IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, FfListContext dbContext, IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -185,7 +183,7 @@ namespace ffxivList
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            DbInitializer.Initialize(dbContext);
+            //DbInitializer.Initialize(dbContext);
         }
     }
 }

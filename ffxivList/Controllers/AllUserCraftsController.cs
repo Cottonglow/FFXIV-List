@@ -11,9 +11,9 @@ namespace ffxivList.Controllers
 {
     public class AllUserCraftsController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public AllUserCraftsController(FFListContext context)
+        public AllUserCraftsController(FfListContext context)
         {
             _context = context;    
         }
@@ -25,7 +25,7 @@ namespace ffxivList.Controllers
 
             AllUserModel model = new AllUserModel()
             {
-                AllUserCrafts = await _context.AllUserCraft.Where(u => u.UserID == userId).ToListAsync(),
+                AllUserCrafts = await _context.AllUserCraft.Where(u => u.UserId == userId).ToListAsync(),
                 Crafts = await _context.Craft.ToListAsync(),
                 User = _context.Users.Find(userId)
             };
@@ -42,13 +42,13 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserCrafts[0].UserID).ToListAsync();
+                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserCrafts[0].UserId).ToListAsync();
 
                 foreach (var item in allUserCrafts)
                 {
                     try
                     {
-                        var userCraft = await _context.UserCraft.AsNoTracking().Where(uq => uq.UserCraftID == item.UserCraftID).ToListAsync();
+                        var userCraft = await _context.UserCraft.AsNoTracking().Where(uq => uq.UserCraftId == item.UserCraftId).ToListAsync();
 
                         if (item.IsComplete != userCraft[0].IsComplete)
                         {
@@ -62,12 +62,12 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserCraft.Update(new UserCraft() { CraftID = item.CraftID, IsComplete = item.IsComplete, UserCraftID = item.UserCraftID, UserID = item.UserID });
+                        _context.UserCraft.Update(new UserCraft() { CraftId = item.CraftId, IsComplete = item.IsComplete, UserCraftId = item.UserCraftId, UserId = item.UserId });
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!AllUserCraftExists(item.UserCraftID))
+                        if (!AllUserCraftExists(item.UserCraftId))
                         {
                             return NotFound();
                         }
@@ -88,7 +88,7 @@ namespace ffxivList.Controllers
         
         private bool AllUserCraftExists(int id)
         {
-            return _context.AllUserCraft.Any(e => e.UserCraftID == id);
+            return _context.AllUserCraft.Any(e => e.UserCraftId == id);
         }
     }
 }

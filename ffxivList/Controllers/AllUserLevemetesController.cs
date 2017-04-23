@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -15,9 +11,9 @@ namespace ffxivList.Controllers
 {
     public class AllUserLevemetesController : Controller
     {
-        private readonly FFListContext _context;
+        private readonly FfListContext _context;
 
-        public AllUserLevemetesController(FFListContext context)
+        public AllUserLevemetesController(FfListContext context)
         {
             _context = context;    
         }
@@ -29,7 +25,7 @@ namespace ffxivList.Controllers
 
             AllUserModel model = new AllUserModel()
             {
-                AllUserLevemetes = await _context.AllUserLevemete.Where(u => u.UserID == userId).ToListAsync(),
+                AllUserLevemetes = await _context.AllUserLevemete.Where(u => u.UserId == userId).ToListAsync(),
                 Levemetes = await _context.Levemetes.ToListAsync(),
                 User = _context.Users.Find(userId)
             };
@@ -46,13 +42,13 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserLevemetes[0].UserID).ToListAsync();
+                var user = await _context.Users.AsNoTracking().Where(u => u.UserId == allUserLevemetes[0].UserId).ToListAsync();
 
                 foreach (var item in allUserLevemetes)
                 {
                     try
                     {
-                        var userLevemete = await _context.UserLevemete.AsNoTracking().Where(uq => uq.UserLevemeteID == item.UserLevemeteID).ToListAsync();
+                        var userLevemete = await _context.UserLevemete.AsNoTracking().Where(uq => uq.UserLevemeteId == item.UserLevemeteId).ToListAsync();
 
                         if (item.IsComplete != userLevemete[0].IsComplete)
                         {
@@ -66,12 +62,12 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserLevemete.Update(new UserLevemete() { LevemeteID = item.LevemeteID, IsComplete = item.IsComplete, UserLevemeteID = item.UserLevemeteID, UserID = item.UserID });
+                        _context.UserLevemete.Update(new UserLevemete() { LevemeteId = item.LevemeteId, IsComplete = item.IsComplete, UserLevemeteId = item.UserLevemeteId, UserId = item.UserId });
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!AllUserLevemeteExists(item.UserLevemeteID))
+                        if (!AllUserLevemeteExists(item.UserLevemeteId))
                         {
                             return NotFound();
                         }
@@ -92,7 +88,7 @@ namespace ffxivList.Controllers
         
         private bool AllUserLevemeteExists(int id)
         {
-            return _context.AllUserLevemete.Any(e => e.UserLevemeteID == id);
+            return _context.AllUserLevemete.Any(e => e.UserLevemeteId == id);
         }
     }
 }
