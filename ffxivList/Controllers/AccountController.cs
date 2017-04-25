@@ -169,6 +169,11 @@ namespace ffxivList.Controllers
             return View(userProfile);
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         #region Helpers
 
         private IActionResult RedirectToLocal(string returnUrl)

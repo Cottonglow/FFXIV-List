@@ -12,7 +12,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.Security.Claims;
+using Auth0.Core;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList
 {
@@ -88,6 +90,13 @@ namespace ffxivList
 
             // Add framework services.
             services.AddMvc();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole", policy => policy.Requirements.Add(new AdminRequirement("Admin")));
+            });
+
+            services.AddSingleton<IAuthorizationHandler, AdminRoleHandler>();
 
             // Add functionality to inject IOptions<T>
             services.AddOptions();
@@ -175,6 +184,8 @@ namespace ffxivList
             });
 
             app.UseOpenIdConnectAuthentication(options.Value);
+
+            app.UseStatusCodePagesWithRedirects("/Home/ErrorFound/{0}");
 
             app.UseMvc(routes =>
             {

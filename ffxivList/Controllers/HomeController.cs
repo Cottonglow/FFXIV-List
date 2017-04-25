@@ -18,8 +18,23 @@ namespace ffxivList.Controllers
         {
             return View();
         }
+        
+        public IActionResult ErrorFound(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        public IActionResult Error()
+            if (id.Equals("404"))
+            {
+                return RedirectToAction("PageNotFound");
+            }
+
+            return View();
+        }
+
+        public IActionResult PageNotFound()
         {
             return View();
         }

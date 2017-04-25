@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList.Controllers
 {
+    
     public class UsersController : Controller
     {
         private readonly FfListContext _context;
@@ -23,6 +25,7 @@ namespace ffxivList.Controllers
         }
 
         // GET: Users/Details/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
