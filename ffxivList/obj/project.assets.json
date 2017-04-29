@@ -1008,6 +1008,20 @@
           "lib/netstandard1.3/Microsoft.CSharp.dll": {}
         }
       },
+      "Microsoft.Data.Sqlite/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "SQLite": "3.13.0",
+          "System.Data.Common": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.Data.Sqlite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.Data.Sqlite.dll": {}
+        }
+      },
       "Microsoft.DiaSymReader.Native/1.4.1": {
         "type": "package",
         "build": {
@@ -1094,6 +1108,19 @@
           "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Design.dll": {}
         }
       },
+      "Microsoft.EntityFrameworkCore.InMemory/1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "1.1.1",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.EntityFrameworkCore.InMemory.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.EntityFrameworkCore.InMemory.dll": {}
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational/1.1.1": {
         "type": "package",
         "dependencies": {
@@ -1121,6 +1148,20 @@
         },
         "runtime": {
           "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Relational.Design.dll": {}
+        }
+      },
+      "Microsoft.EntityFrameworkCore.Sqlite/1.1.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Data.Sqlite": "1.1.0",
+          "Microsoft.EntityFrameworkCore.Relational": "1.1.1",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Sqlite.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Sqlite.dll": {}
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer/1.1.1": {
@@ -2346,6 +2387,33 @@
         "type": "package",
         "runtimeTargets": {
           "runtimes/win7-x86/native/sni.dll": {
+            "assetType": "native",
+            "rid": "win7-x86"
+          }
+        }
+      },
+      "SQLite/3.13.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.0/_._": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/_._": {}
+        },
+        "runtimeTargets": {
+          "runtimes/linux-x64/native/libsqlite3.so": {
+            "assetType": "native",
+            "rid": "linux-x64"
+          },
+          "runtimes/osx-x64/native/libsqlite3.dylib": {
+            "assetType": "native",
+            "rid": "osx-x64"
+          },
+          "runtimes/win7-x64/native/sqlite3.dll": {
+            "assetType": "native",
+            "rid": "win7-x64"
+          },
+          "runtimes/win7-x86/native/sqlite3.dll": {
             "assetType": "native",
             "rid": "win7-x86"
           }
@@ -5315,6 +5383,19 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
+    "Microsoft.Data.Sqlite/1.1.0": {
+      "sha512": "T09U31d2uBe9bvECrz/5cgMPR3256D8SY/+bVDD+KqpX9kbLQuyunm8pR9aUDlsRrVOlSq5Gbg2vMOnBMRbJRQ==",
+      "type": "package",
+      "path": "microsoft.data.sqlite/1.1.0",
+      "files": [
+        "lib/net451/Microsoft.Data.Sqlite.dll",
+        "lib/net451/Microsoft.Data.Sqlite.xml",
+        "lib/netstandard1.3/Microsoft.Data.Sqlite.dll",
+        "lib/netstandard1.3/Microsoft.Data.Sqlite.xml",
+        "microsoft.data.sqlite.1.1.0.nupkg.sha512",
+        "microsoft.data.sqlite.nuspec"
+      ]
+    },
     "Microsoft.DiaSymReader.Native/1.4.1": {
       "sha512": "oi9LCkKzSm7WgI0LsODDQUQdzldNdv9BU/QDoW9QMu+uN4baJXANkTWrjc2+aTqeftyhPXF1fn/m9jPo7mJ6FA==",
       "type": "package",
@@ -5368,6 +5449,19 @@
         "microsoft.entityframeworkcore.design.nuspec"
       ]
     },
+    "Microsoft.EntityFrameworkCore.InMemory/1.1.1": {
+      "sha512": "4PLbgae2PgU8ZCDTjoYK09jKxCWJmWArveEQNxsZMwhLcAtVQYZAot7mDovD6qM7O788CrpDx6QaeYKpd/Zbnw==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.inmemory/1.1.1",
+      "files": [
+        "lib/net451/Microsoft.EntityFrameworkCore.InMemory.dll",
+        "lib/net451/Microsoft.EntityFrameworkCore.InMemory.xml",
+        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.InMemory.dll",
+        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.InMemory.xml",
+        "microsoft.entityframeworkcore.inmemory.1.1.1.nupkg.sha512",
+        "microsoft.entityframeworkcore.inmemory.nuspec"
+      ]
+    },
     "Microsoft.EntityFrameworkCore.Relational/1.1.1": {
       "sha512": "wIeIC02b3uFQ0Mgd5yDcpzbGQs383p2BAkpMjNz2xffo9QAFXO1CDavuolRk5I2Rv/iBy9igB91BZoY0tpcMzA==",
       "type": "package",
@@ -5392,6 +5486,19 @@
         "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Relational.Design.xml",
         "microsoft.entityframeworkcore.relational.design.1.1.1.nupkg.sha512",
         "microsoft.entityframeworkcore.relational.design.nuspec"
+      ]
+    },
+    "Microsoft.EntityFrameworkCore.Sqlite/1.1.1": {
+      "sha512": "Zuau7we/Umqswz4yiGN5XPjIBi84CBg6xearSvEUZ07XpnMmd4wg/5+d5z9ZTMZkUxvvpw93+3BUdolFJJ1lDg==",
+      "type": "package",
+      "path": "microsoft.entityframeworkcore.sqlite/1.1.1",
+      "files": [
+        "lib/net451/Microsoft.EntityFrameworkCore.Sqlite.dll",
+        "lib/net451/Microsoft.EntityFrameworkCore.Sqlite.xml",
+        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Sqlite.dll",
+        "lib/netstandard1.3/Microsoft.EntityFrameworkCore.Sqlite.xml",
+        "microsoft.entityframeworkcore.sqlite.1.1.1.nupkg.sha512",
+        "microsoft.entityframeworkcore.sqlite.nuspec"
       ]
     },
     "Microsoft.EntityFrameworkCore.SqlServer/1.1.1": {
@@ -6549,6 +6656,25 @@
         "runtime.win7-x86.runtime.native.system.data.sqlclient.sni.4.3.0.nupkg.sha512",
         "runtime.win7-x86.runtime.native.system.data.sqlclient.sni.nuspec",
         "runtimes/win7-x86/native/sni.dll"
+      ]
+    },
+    "SQLite/3.13.0": {
+      "sha512": "MJfRiz2p6aMVOxrxGMdVzhpzI0oxTgZSwC8eVuOpV8L7yYaFUu8q/OFYwv9P0/aZ/pdEu24O6gma6wZJMTun9A==",
+      "type": "package",
+      "path": "sqlite/3.13.0",
+      "files": [
+        "build/net45/SQLite.props",
+        "lib/netstandard1.0/_._",
+        "runtimes/linux-x64/native/libsqlite3.so",
+        "runtimes/osx-x64/native/libsqlite3.dylib",
+        "runtimes/win10-arm/nativeassets/uap10.0/sqlite3.dll",
+        "runtimes/win10-x64/nativeassets/uap10.0/sqlite3.dll",
+        "runtimes/win10-x86/nativeassets/uap10.0/sqlite3.dll",
+        "runtimes/win7-x64/native/sqlite3.dll",
+        "runtimes/win7-x86/native/sqlite3.dll",
+        "sqlite-version.txt",
+        "sqlite.3.13.0.nupkg.sha512",
+        "sqlite.nuspec"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -11461,8 +11587,10 @@
       "Microsoft.AspNetCore.Mvc >= 1.1.2",
       "Microsoft.AspNetCore.StaticFiles >= 1.1.1",
       "Microsoft.EntityFrameworkCore.Design >= 1.1.1",
+      "Microsoft.EntityFrameworkCore.InMemory >= 1.1.1",
       "Microsoft.EntityFrameworkCore.SqlServer >= 1.1.1",
       "Microsoft.EntityFrameworkCore.SqlServer.Design >= 1.1.1",
+      "Microsoft.EntityFrameworkCore.Sqlite >= 1.1.1",
       "Microsoft.Extensions.Logging.Debug >= 1.1.1",
       "Microsoft.NETCore.App >= 1.1.1",
       "Microsoft.VisualStudio.Web.BrowserLink >= 1.1.0",
@@ -11510,6 +11638,10 @@
             "target": "Package",
             "version": "1.1.1"
           },
+          "Microsoft.EntityFrameworkCore.InMemory": {
+            "target": "Package",
+            "version": "1.1.1"
+          },
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "1.1.0"
@@ -11540,6 +11672,10 @@
             "version": "1.1.0"
           },
           "Microsoft.AspNetCore.Authentication.OAuth": {
+            "target": "Package",
+            "version": "1.1.1"
+          },
+          "Microsoft.EntityFrameworkCore.Sqlite": {
             "target": "Package",
             "version": "1.1.1"
           },

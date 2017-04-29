@@ -20,7 +20,7 @@
         <div class="form-group">
             <label asp-for="LevemeteLevel" class="col-md-2 control-label">Level</label>
             <div class="col-md-10">
-                <input asp-for="LevemeteLevel" class="form-control" />
+                <input asp-for="LevemeteLevel" class="form-control" type="number" min="1" max="60" />
                 <span asp-validation-for="LevemeteLevel" class="text-danger"></span>
             </div>
         </div>

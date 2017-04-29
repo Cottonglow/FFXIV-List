@@ -15,6 +15,7 @@ using System.Security.Claims;
 using Auth0.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.Sqlite;
 
 namespace ffxivList
 {
@@ -36,8 +37,30 @@ namespace ffxivList
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+#if DEBUG
+            var connectionStringBuilder =
+                new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionString = connectionStringBuilder.ToString();
+            var connection = new SqliteConnection(connectionString);
+
+            services.AddDbContext<FfListContext>(options =>
+                options.UseSqlite(connection));
+
+            var builder = new DbContextOptionsBuilder<FfListContext>();
+            builder.UseSqlite(connection);
+            var contextOptions = builder.Options;
+
+            using (var context = new FfListContext(contextOptions))
+            {
+                context.Database.OpenConnection();
+                context.Database.EnsureCreated();
+                context.Database.Migrate();
+            }
+#elif RELEASE
             services.AddDbContext<FfListContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+#endif
+
 
             // Add authentication services
             services.AddAuthentication(
@@ -194,7 +217,7 @@ namespace ffxivList
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //DbInitializer.Initialize(dbContext);
+            DbInitializer.Initialize(dbContext);
         }
     }
 }

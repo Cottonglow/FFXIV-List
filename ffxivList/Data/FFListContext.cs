@@ -1,11 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ffxivList.Models;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace ffxivList.Data
 {
     public class FfListContext : DbContext
     {
+        public FfListContext(DbContextOptions<FfListContext> options)
+            : base(options)
+        {
+        }
+
         public DbSet<Levemete> Levemetes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Quest> Quest { get; set; }
@@ -18,7 +24,7 @@ namespace ffxivList.Data
         public DbSet<AllUserCraft> AllUserCraft { get; set; }
         public DbSet<AllUserLevemete> AllUserLevemete { get; set; }
         public DbSet<AllUserQuest> AllUserQuest { get; set; }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Levemete>().ToTable("Levemete");
@@ -35,11 +41,6 @@ namespace ffxivList.Data
             modelBuilder.Entity<AllUserCraft>().HasKey(c => new { CraftID = c.CraftId, UserID = c.UserId });
             modelBuilder.Entity<AllUserLevemete>().HasKey(c => new { LevemeteID = c.LevemeteId, UserID = c.UserId });
             modelBuilder.Entity<AllUserQuest>().HasKey(c => new { QuestID = c.QuestId, UserID = c.UserId });
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseMySql("Server = localhost; database = db_fflist; uid = root; pwd = My_SQLD4t4base-;");
         }
 
         public void DetachAllEntities()

@@ -62,7 +62,26 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserCraft.Update(new UserCraft() { CraftId = item.CraftId, IsComplete = item.IsComplete, UserCraftId = item.UserCraftId, UserId = item.UserId });
+                        _context.UserCraft.Update(new UserCraft()
+                        {
+                            CraftId = item.CraftId,
+                            IsComplete = item.IsComplete,
+                            UserCraftId = item.UserCraftId,
+                            UserId = item.UserId
+                        });
+
+#if DEBUG
+                        _context.AllUserCraft.Update(new AllUserCraft()
+                        {
+                            CraftLevel = item.CraftLevel,
+                            CraftId = item.CraftId,
+                            IsComplete = item.IsComplete,
+                            CraftName = item.CraftName,
+                            UserId = item.UserId,
+                            UserCraftId = item.UserCraftId
+                        });
+#endif
+
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)

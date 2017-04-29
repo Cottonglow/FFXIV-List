@@ -22,7 +22,7 @@ namespace ffxivList.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.NameIdentifier)?.Value;
-
+            
             AllUserModel model = new AllUserModel()
             {
                 AllUserQuests = await _context.AllUserQuest.Where(u => u.UserId == userId).ToListAsync(),
@@ -62,7 +62,26 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserQuest.Update(new UserQuest() { QuestId = item.QuestId, IsComplete = item.IsComplete, UserQuestId = item.UserQuestId, UserId = item.UserId });
+                        _context.UserQuest.Update(new UserQuest()
+                        {
+                            QuestId = item.QuestId,
+                            IsComplete = item.IsComplete,
+                            UserQuestId = item.UserQuestId,
+                            UserId = item.UserId
+                        });
+
+#if DEBUG
+                        _context.AllUserQuest.Update(new AllUserQuest()
+                        {
+                            QuestLevel = item.QuestLevel,
+                            QuestId = item.QuestId,
+                            IsComplete = item.IsComplete,
+                            QuestName = item.QuestName,
+                            UserId = item.UserId,
+                            UserQuestId = item.UserQuestId
+                        });
+#endif
+
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)

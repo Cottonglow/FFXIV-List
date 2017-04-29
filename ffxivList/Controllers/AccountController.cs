@@ -19,11 +19,13 @@ namespace ffxivList.Controllers
     {
         private readonly Auth0Settings _auth0Settings;
         IOptions<OpenIdConnectOptions> _options;
+        private DbContextOptions<FfListContext> _dbContextOptions;
 
-        public AccountController(IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options)
+        public AccountController(IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options, DbContextOptions<FfListContext> dbContextOptions)
         {
             _auth0Settings = auth0Settings.Value;
             _options = options;
+            _dbContextOptions = dbContextOptions;
         }
 
         [HttpGet]
@@ -45,7 +47,7 @@ namespace ffxivList.Controllers
 
         public async Task<IActionResult> LoginSuccessful()
         {
-            using (var context = new FfListContext())
+            using (var context = new FfListContext(_dbContextOptions))
             {
                 // Get user info from token
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
@@ -67,6 +69,91 @@ namespace ffxivList.Controllers
 
                     context.Users.Add(user);
 
+#if DEBUG
+                    foreach (var leve in levemetes)
+                    {
+                        AllUserLevemete allUserLevemete = await context.AllUserLevemete.LastAsync();
+
+                        context.AllUserLevemete.Add(new AllUserLevemete()
+                        {
+                            IsComplete = false,
+                            LevemeteId = leve.LevemeteId,
+                            LevemeteLevel = leve.LevemeteLevel,
+                            LevemeteName = leve.LevemeteName,
+                            UserId = userId,
+                            UserLevemeteId = allUserLevemete.UserLevemeteId + 1
+                        });
+
+                        context.SaveChanges();
+
+                        context.UserLevemete.Add(
+                            new UserLevemete()
+                            {
+                                IsComplete = false,
+                                LevemeteId = leve.LevemeteId,
+                                UserId = user.UserId,
+                                UserLevemeteId = allUserLevemete.UserLevemeteId + 1
+                            });
+
+                        context.SaveChanges();
+                    }
+
+                    foreach (var quest in quests)
+                    {
+                        AllUserQuest allUserQuest = await context.AllUserQuest.LastAsync();
+
+                        context.UserQuest.Add(
+                            new UserQuest()
+                            {
+                                IsComplete = false,
+                                QuestId = quest.QuestId,
+                                UserId = user.UserId,
+                                UserQuestId = allUserQuest.UserQuestId + 1
+                            });
+
+                        context.SaveChanges();
+
+                        context.AllUserQuest.Add(new AllUserQuest()
+                        {
+                            IsComplete = false,
+                            QuestId = quest.QuestId,
+                            QuestLevel = quest.QuestLevel,
+                            QuestName = quest.QuestName,
+                            UserId = userId,
+                            UserQuestId = allUserQuest.UserQuestId + 1
+                        });
+
+                        context.SaveChanges();
+                    }
+
+                    foreach (var craft in crafts)
+                    {
+                        AllUserCraft allUserCraft = await context.AllUserCraft.LastAsync();
+
+                        context.UserCraft.Add(
+                            new UserCraft()
+                            {
+                                IsComplete = false,
+                                CraftId = craft.CraftId,
+                                UserId = user.UserId,
+                                UserCraftId = allUserCraft.UserCraftId + 1
+                            });
+
+                        context.SaveChanges();
+
+                        context.AllUserCraft.Add(new AllUserCraft()
+                        {
+                            IsComplete = false,
+                            CraftId = craft.CraftId,
+                            CraftLevel = craft.CraftLevel,
+                            CraftName = craft.CraftName,
+                            UserId = userId,
+                            UserCraftId = allUserCraft.UserCraftId + 1
+                        });
+
+                        context.SaveChanges();
+                    }
+#elif RELEASE
                     foreach (var leve in levemetes)
                     {
                         context.UserLevemete.Add(
@@ -99,6 +186,7 @@ namespace ffxivList.Controllers
                                 UserId = user.UserId
                             });
                     }
+#endif
                 }
                 else
                 {
@@ -144,7 +232,7 @@ namespace ffxivList.Controllers
         {
             UserProfile userProfile;
 
-            using (var context = new FfListContext())
+            using (var context = new FfListContext(_dbContextOptions))
             {
                 List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
                 List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
@@ -174,7 +262,7 @@ namespace ffxivList.Controllers
             return View();
         }
 
-        #region Helpers
+#region Helpers
 
         private IActionResult RedirectToLocal(string returnUrl)
         {
@@ -188,6 +276,6 @@ namespace ffxivList.Controllers
             }
         }
 
-        #endregion
+#endregion
     }
 }

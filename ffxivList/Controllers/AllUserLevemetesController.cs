@@ -62,7 +62,24 @@ namespace ffxivList.Controllers
                             }
                         }
 
-                        _context.UserLevemete.Update(new UserLevemete() { LevemeteId = item.LevemeteId, IsComplete = item.IsComplete, UserLevemeteId = item.UserLevemeteId, UserId = item.UserId });
+                        _context.UserLevemete.Update(new UserLevemete()
+                        {
+                            LevemeteId = item.LevemeteId,
+                            IsComplete = item.IsComplete,
+                            UserLevemeteId = item.UserLevemeteId,
+                            UserId = item.UserId
+                        });
+#if DEBUG
+                        _context.AllUserLevemete.Update(new AllUserLevemete()
+                        {
+                            LevemeteLevel = item.LevemeteLevel,
+                            LevemeteId = item.LevemeteId,
+                            IsComplete = item.IsComplete,
+                            LevemeteName = item.LevemeteName,
+                            UserId = item.UserId,
+                            UserLevemeteId = item.UserLevemeteId
+                        });
+#endif
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)

@@ -1,0 +1,41 @@
+@model ffxivList.Models.Levemete
+
+@{
+    ViewData["Title"] = "Delete Levemete";
+}
+
+<h2>Delete</h2>
+
+<div class="alert alert-danger" role="alert"> Are you sure you want to delete this levemete?</div>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="LevemeteId" />
+        <dt>
+            Name
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteName)
+        </dd>
+        <dt>
+            Level
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevemeteLevel)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
+<br />
+<br />
+<br />
+<div class="btn-group" role="group" aria-label="...">
+    <a asp-action="IndexAdmin" class="btn btn-link" role="button">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.LevemeteId" class="btn btn-success" role="button">Edit</a>
+    <a asp-action="Details" asp-route-id="@Model.LevemeteId" class="btn btn-warning" role="button">Details</a>
+</div>

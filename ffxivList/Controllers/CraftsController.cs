@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList.Controllers
 {
@@ -24,8 +25,9 @@ namespace ffxivList.Controllers
             List<Craft> crafts = await _context.Craft.ToListAsync();
             return View(crafts);
         }
-        
+
         // GET: Crafts
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> IndexAdmin()
         {
             List<Craft> crafts = await _context.Craft.ToListAsync();
@@ -33,6 +35,7 @@ namespace ffxivList.Controllers
         }
 
         // GET: Crafts/Details/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -51,6 +54,7 @@ namespace ffxivList.Controllers
         }
 
         // GET: Crafts/Create
+        [Authorize(Policy = "RequireAdministratorRole")]
         public IActionResult Create()
         {
             return View();
@@ -59,6 +63,7 @@ namespace ffxivList.Controllers
         // POST: Crafts/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CraftID,CraftName,CraftLevel")] Craft craft)
@@ -81,6 +86,23 @@ namespace ffxivList.Controllers
                         CraftId = c.CraftId,
                         UserId = user.UserId
                     });
+
+                    await _context.SaveChangesAsync();
+#if DEBUG
+                    UserCraft userCraft = await _context.UserCraft.LastAsync();
+
+                    _context.AllUserCraft.Add(new AllUserCraft()
+                    {
+                        IsComplete = false,
+                        CraftId = craft.CraftId,
+                        CraftLevel = craft.CraftLevel,
+                        CraftName = craft.CraftName,
+                        UserId = user.UserId,
+                        UserCraftId = userCraft.UserCraftId
+                    });
+
+                    await _context.SaveChangesAsync();
+#endif
                 }
 
                 await _context.SaveChangesAsync();
@@ -91,6 +113,7 @@ namespace ffxivList.Controllers
         }
 
         // GET: Crafts/Edit/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -109,10 +132,14 @@ namespace ffxivList.Controllers
         // POST: Crafts/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CraftID,CraftName,CraftLevel")] Craft craft)
         {
+#if DEBUG
+            craft.CraftId = id;
+#endif
             if (id != craft.CraftId)
             {
                 return NotFound();
@@ -123,6 +150,24 @@ namespace ffxivList.Controllers
                 try
                 {
                     _context.Update(craft);
+#if DEBUG
+                    var allUserCrafts = await _context.AllUserCraft.AsNoTracking().Where(c => c.CraftId == craft.CraftId).ToListAsync();
+
+                    foreach (var allUserCraft in allUserCrafts)
+                    {
+                        _context.AllUserCraft.Update(new AllUserCraft()
+                        {
+                            CraftLevel = craft.CraftLevel,
+                            CraftId = craft.CraftId,
+                            IsComplete = allUserCraft.IsComplete,
+                            CraftName = craft.CraftName,
+                            UserId = allUserCraft.UserId,
+                            UserCraftId = allUserCraft.UserCraftId
+                        });
+
+                        await _context.SaveChangesAsync();
+                    }
+#endif
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -142,6 +187,7 @@ namespace ffxivList.Controllers
         }
 
         // GET: Crafts/Delete/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -160,12 +206,38 @@ namespace ffxivList.Controllers
         }
 
         // POST: Crafts/Delete/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftId == id);
             _context.Craft.Remove(craft);
+#if DEBUG
+            var allUserCrafts = await _context.AllUserCraft.AsNoTracking().Where(c => c.CraftId == craft.CraftId).ToListAsync();
+
+            foreach (var allUserCraft in allUserCrafts)
+            {
+                _context.AllUserCraft.Remove(new AllUserCraft()
+                {
+                    CraftLevel = craft.CraftLevel,
+                    CraftId = craft.CraftId,
+                    IsComplete = allUserCraft.IsComplete,
+                    CraftName = craft.CraftName,
+                    UserId = allUserCraft.UserId,
+                    UserCraftId = allUserCraft.UserCraftId
+                });
+
+                if (allUserCraft.IsComplete)
+                {
+                    var users = _context.Users.Find(allUserCraft.UserId);
+                    users.UserCraftsCompleted -= 1;
+                    _context.Users.Update(users);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+#endif
             await _context.SaveChangesAsync();
             return RedirectToAction("IndexAdmin");
         }

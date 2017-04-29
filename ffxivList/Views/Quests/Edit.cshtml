@@ -21,7 +21,7 @@
         <div class="form-group">
             <label asp-for="QuestLevel" class="col-md-2 control-label">Level</label>
             <div class="col-md-10">
-                <input asp-for="QuestLevel" class="form-control" />
+                <input asp-for="QuestLevel" class="form-control" type="number" min="1" max="60"/>
                 <span asp-validation-for="QuestLevel" class="text-danger"></span>
             </div>
         </div>

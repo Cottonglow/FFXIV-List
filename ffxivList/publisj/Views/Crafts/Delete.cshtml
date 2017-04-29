@@ -1,0 +1,41 @@
+@model ffxivList.Models.Craft
+
+@{
+    ViewData["Title"] = "Delete Craft";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-danger" role="alert"> Are you sure you want to delete this craft?</div>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <input type="hidden" asp-for="CraftId" />
+        <dt>
+            Name
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CraftName)
+        </dd>
+        <dt>
+            Level
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CraftLevel)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form>
+</div>
+<br />
+<br />
+<br />
+<div class="btn-group" role="group" aria-label="...">
+    <a asp-action="IndexAdmin" class="btn btn-link" role="button">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.CraftId" class="btn btn-success" role="button">Edit</a>
+    <a asp-action="Details" asp-route-id="@Model.CraftId" class="btn btn-warning" role="button">Details</a>
+</div>

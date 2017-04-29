@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList.Controllers
 {
-    
+    [Authorize(Policy = "RequireAdministratorRole")]
     public class UsersController : Controller
     {
         private readonly FfListContext _context;
@@ -25,7 +25,6 @@ namespace ffxivList.Controllers
         }
 
         // GET: Users/Details/5
-        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -66,6 +65,9 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("UserId,UserName,UserEmail,UserRole")] User user)
         {
+#if DEBUG
+            user.UserId = id;
+#endif
             if (id != user.UserId)
             {
                 return NotFound();
@@ -76,6 +78,7 @@ namespace ffxivList.Controllers
                 try
                 {
                     _context.Update(user);
+                    
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -104,6 +107,7 @@ namespace ffxivList.Controllers
 
             var user = await _context.Users
                 .SingleOrDefaultAsync(m => m.UserId == id);
+            
             if (user == null)
             {
                 return NotFound();

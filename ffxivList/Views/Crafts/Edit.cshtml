@@ -21,7 +21,7 @@
         <div class="form-group">
             <label asp-for="CraftLevel" class="col-md-2 control-label">Level</label>
             <div class="col-md-10">
-                <input asp-for="CraftLevel" class="form-control" />
+                <input asp-for="CraftLevel" class="form-control" type="number" min="1" max="60" />
                 <span asp-validation-for="CraftLevel" class="text-danger"></span>
             </div>
         </div>

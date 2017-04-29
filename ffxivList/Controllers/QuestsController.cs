@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList.Controllers
 {
@@ -30,6 +31,7 @@ namespace ffxivList.Controllers
             return View(modelContainer);
         }
 
+        [Authorize(Policy = "RequireAdministratorRole")]
         // GET: Quests
         public async Task<IActionResult> IndexAdmin()
         {
@@ -42,6 +44,7 @@ namespace ffxivList.Controllers
             return View(modelContainer);
         }
 
+        [Authorize(Policy = "RequireAdministratorRole")]
         // GET: Quests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -60,6 +63,7 @@ namespace ffxivList.Controllers
             return View(quest);
         }
 
+        [Authorize(Policy = "RequireAdministratorRole")]
         // GET: Quests/Create
         public IActionResult Create()
         {
@@ -69,6 +73,7 @@ namespace ffxivList.Controllers
         // POST: Quests/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("QuestID,QuestName,QuestLevel")] Quest quest)
@@ -91,16 +96,35 @@ namespace ffxivList.Controllers
                         QuestId = q.QuestId,
                         UserId = user.UserId
                     });
+
+                    await _context.SaveChangesAsync();
+
+#if DEBUG
+                    UserQuest userQuest = await _context.UserQuest.LastAsync();
+
+                    _context.AllUserQuest.Add(new AllUserQuest()
+                    {
+                        IsComplete = false,
+                        QuestId = quest.QuestId,
+                        QuestLevel = quest.QuestLevel,
+                        QuestName = quest.QuestName,
+                        UserId = user.UserId,
+                        UserQuestId = userQuest.UserQuestId
+                    });
+
+                    await _context.SaveChangesAsync();
+#endif
                 }
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("IndexAdmin");
             }
             return View(quest);
         }
 
         // GET: Quests/Edit/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -119,10 +143,14 @@ namespace ffxivList.Controllers
         // POST: Quests/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("QuestID,QuestName,QuestLevel")] Quest quest)
         {
+#if DEBUG
+            quest.QuestId = id;
+#endif
             if (id != quest.QuestId)
             {
                 return NotFound();
@@ -133,6 +161,24 @@ namespace ffxivList.Controllers
                 try
                 {
                     _context.Update(quest);
+#if DEBUG
+                    var allUserQuests = await _context.AllUserQuest.AsNoTracking().Where(q => q.QuestId == quest.QuestId).ToListAsync();
+
+                    foreach (var allUserQuest in allUserQuests)
+                    {
+                        _context.AllUserQuest.Update(new AllUserQuest()
+                        {
+                            QuestLevel = quest.QuestLevel,
+                            QuestId = quest.QuestId,
+                            IsComplete = allUserQuest.IsComplete,
+                            QuestName = quest.QuestName,
+                            UserId = allUserQuest.UserId,
+                            UserQuestId = allUserQuest.UserQuestId
+                        });
+
+                        await _context.SaveChangesAsync();
+                    }
+#endif
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -146,12 +192,13 @@ namespace ffxivList.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                return RedirectToAction("IndexAdmin");
             }
             return View(quest);
         }
 
         // GET: Quests/Delete/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -170,14 +217,40 @@ namespace ffxivList.Controllers
         }
 
         // POST: Quests/Delete/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
             _context.Quest.Remove(quest);
+#if DEBUG
+            var allUserQuests = await _context.AllUserQuest.AsNoTracking().Where(q => q.QuestId == quest.QuestId).ToListAsync();
+
+            foreach (var allUserQuest in allUserQuests)
+            {
+                _context.AllUserQuest.Remove(new AllUserQuest()
+                {
+                    QuestLevel = quest.QuestLevel,
+                    QuestId = quest.QuestId,
+                    IsComplete = allUserQuest.IsComplete,
+                    QuestName = quest.QuestName,
+                    UserId = allUserQuest.UserId,
+                    UserQuestId = allUserQuest.UserQuestId
+                });
+
+                if (allUserQuest.IsComplete)
+                {
+                    var users = _context.Users.Find(allUserQuest.UserId);
+                    users.UserQuestsCompleted -= 1;
+                    _context.Users.Update(users);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+#endif
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("IndexAdmin");
         }
 
         private bool QuestExists(int id)
