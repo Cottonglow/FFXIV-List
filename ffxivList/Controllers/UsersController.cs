@@ -70,7 +70,10 @@ namespace ffxivList.Controllers
         public async Task<IActionResult> Edit(string id, [Bind("UserId,UserName,UserEmail,UserRole")] User user)
         {
 #if DEBUG
-            user.UserId = id;
+            if (UserExists(id))
+            {
+                user.UserId = id;
+            }
 #endif
             if (id != user.UserId)
             {
@@ -100,37 +103,7 @@ namespace ffxivList.Controllers
             }
             return View(user);
         }
-
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index", new { alertMessage = Constants.IdNotFound });
-            }
-
-            var user = await _context.Users
-                .SingleOrDefaultAsync(m => m.UserId == id);
-            
-            if (user == null)
-            {
-                return RedirectToAction("Index", new { alertMessage = Constants.UserNotFound });
-            }
-
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var user = await _context.Users.SingleOrDefaultAsync(m => m.UserId == id);
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
+        
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.UserId == id);

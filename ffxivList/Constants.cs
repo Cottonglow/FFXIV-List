@@ -13,6 +13,7 @@ namespace ffxivList
         public static string CraftNotFound = "Unable to find the requested Craft.";
         public static string UserNotFound = "Unable to find the requested User.";
 
+        public static string ParametersNotAllowed = "Parameters entered are not allowed.";
         public static string DbUpdateError = "DbUpdateConcurrencyException occured: ";
     }
 }

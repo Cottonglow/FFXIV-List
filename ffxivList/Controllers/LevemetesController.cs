@@ -73,6 +73,11 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (levemete.LevemeteName.Length > 50 || levemete.LevemeteLevel > 60 || levemete.LevemeteLevel < 1)
+                {
+                    return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed });
+                }
+
                 _context.Add(levemete);
                 
                 await _context.SaveChangesAsync();
@@ -143,6 +148,11 @@ namespace ffxivList.Controllers
                 return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
+            if (levemete.LevemeteName.Length > 50 || levemete.LevemeteLevel > 60 || levemete.LevemeteLevel < 1)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed });
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -210,7 +220,14 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteId == id);
+            var levemete = await _context.Levemetes
+                .SingleOrDefaultAsync(m => m.LevemeteId == id);
+            if (levemete == null)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
+            }
+
+            levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteId == id);
             _context.Levemetes.Remove(levemete);
 
 #if DEBUG

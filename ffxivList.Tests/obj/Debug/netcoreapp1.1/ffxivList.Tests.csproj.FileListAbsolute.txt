@@ -1,0 +1,14 @@
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\xunit.runner.utility.netstandard15.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\xunit.runner.reporters.netstandard15.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.Tests.deps.json
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.Tests.runtimeconfig.json
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.Tests.runtimeconfig.dev.json
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.Tests.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.Tests.pdb
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\bin\Debug\netcoreapp1.1\ffxivList.pdb
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\obj\Debug\netcoreapp1.1\ffxivList.Tests.csprojResolveAssemblyReference.cache
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\obj\Debug\netcoreapp1.1\ffxivList.Tests.AssemblyInfo.cs
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\obj\Debug\netcoreapp1.1\ffxivList.Tests.dll
+C:\Users\Rose\Documents\University\University\Year 3\ffxivList\FFXIV-List\ffxivList.Tests\obj\Debug\netcoreapp1.1\ffxivList.Tests.pdb

@@ -12,8 +12,6 @@
     <dl class="dl-horizontal">
         <dt> Name </dt>
         <dd> @Html.DisplayFor(model => model.UserName) </dd>
-        <dt> Email </dt>
-        <dd> @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value </dd>
         <dt> Role </dt>
         <dd> @Html.DisplayFor(model => model.UserRole) </dd>
         <dt> Levemetes Completed </dt>
@@ -27,6 +25,5 @@
 <div class="btn-group" role="group" aria-label="...">
     <a asp-action="Index" class="btn btn-link" role="button">Back to List</a>
     <a asp-action="Edit" asp-route-id="@Model.UserId" class="btn btn-success" role="button">Edit</a>
-    <a asp-action="Delete" asp-route-id="@Model.UserId" class="btn btn-danger" role="button">Delete</a>
 </div>
 

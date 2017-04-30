@@ -17,15 +17,11 @@ namespace ffxivList.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly Auth0Settings _auth0Settings;
-        IOptions<OpenIdConnectOptions> _options;
-        private DbContextOptions<FfListContext> _dbContextOptions;
+        private readonly FfListContext _context;
 
-        public AccountController(IOptions<Auth0Settings> auth0Settings, IOptions<OpenIdConnectOptions> options, DbContextOptions<FfListContext> dbContextOptions)
+        public AccountController( FfListContext context)
         {
-            _auth0Settings = auth0Settings.Value;
-            _options = options;
-            _dbContextOptions = dbContextOptions;
+            _context = context;
         }
 
         [HttpGet]
@@ -33,22 +29,9 @@ namespace ffxivList.Controllers
         {
             return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = Url.Action("LoginSuccessful", "Account") });
         }
-
-        [HttpGet]
-        public IActionResult LoginExternal(string connection, string returnUrl = "/")
-        {
-            var properties = new AuthenticationProperties() { RedirectUri = returnUrl };
-
-            if (!string.IsNullOrEmpty(connection))
-                properties.Items.Add("connection", connection);
-
-            return new ChallengeResult("Auth0", properties);
-        }
-
+        
         public async Task<IActionResult> LoginSuccessful()
         {
-            using (var context = new FfListContext(_dbContextOptions))
-            {
                 // Get user info from token
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
                 var userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email).Value;
@@ -56,25 +39,25 @@ namespace ffxivList.Controllers
 
                 User user = new User { UserId = userId, UserName = userName };
 
-                List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
-                List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
-                List<Craft> crafts = await context.Craft.AsNoTracking().ToListAsync();
+                List<Levemete> levemetes = await _context.Levemetes.AsNoTracking().ToListAsync();
+                List<Quest> quests = await _context.Quest.AsNoTracking().ToListAsync();
+                List<Craft> crafts = await _context.Craft.AsNoTracking().ToListAsync();
 
-                if (context.Users.Find(user.UserId) == null)
+                if (_context.Users.Find(user.UserId) == null)
                 {
                     user.UserRole = "User";
                     user.UserCraftsCompleted = 0;
                     user.UserLevemetesCompleted = 0;
                     user.UserQuestsCompleted = 0;
 
-                    context.Users.Add(user);
+                    _context.Users.Add(user);
 
 #if DEBUG
                     foreach (var leve in levemetes)
                     {
-                        AllUserLevemete allUserLevemete = await context.AllUserLevemete.LastAsync();
+                        AllUserLevemete allUserLevemete = await _context.AllUserLevemete.LastAsync();
 
-                        context.AllUserLevemete.Add(new AllUserLevemete()
+                        _context.AllUserLevemete.Add(new AllUserLevemete()
                         {
                             IsComplete = false,
                             LevemeteId = leve.LevemeteId,
@@ -84,9 +67,9 @@ namespace ffxivList.Controllers
                             UserLevemeteId = allUserLevemete.UserLevemeteId + 1
                         });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
 
-                        context.UserLevemete.Add(
+                        _context.UserLevemete.Add(
                             new UserLevemete()
                             {
                                 IsComplete = false,
@@ -95,14 +78,14 @@ namespace ffxivList.Controllers
                                 UserLevemeteId = allUserLevemete.UserLevemeteId + 1
                             });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
                     }
 
                     foreach (var quest in quests)
                     {
-                        AllUserQuest allUserQuest = await context.AllUserQuest.LastAsync();
+                        AllUserQuest allUserQuest = await _context.AllUserQuest.LastAsync();
 
-                        context.UserQuest.Add(
+                        _context.UserQuest.Add(
                             new UserQuest()
                             {
                                 IsComplete = false,
@@ -111,9 +94,9 @@ namespace ffxivList.Controllers
                                 UserQuestId = allUserQuest.UserQuestId + 1
                             });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
 
-                        context.AllUserQuest.Add(new AllUserQuest()
+                        _context.AllUserQuest.Add(new AllUserQuest()
                         {
                             IsComplete = false,
                             QuestId = quest.QuestId,
@@ -123,14 +106,14 @@ namespace ffxivList.Controllers
                             UserQuestId = allUserQuest.UserQuestId + 1
                         });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
                     }
 
                     foreach (var craft in crafts)
                     {
-                        AllUserCraft allUserCraft = await context.AllUserCraft.LastAsync();
+                        AllUserCraft allUserCraft = await _context.AllUserCraft.LastAsync();
 
-                        context.UserCraft.Add(
+                        _context.UserCraft.Add(
                             new UserCraft()
                             {
                                 IsComplete = false,
@@ -139,9 +122,9 @@ namespace ffxivList.Controllers
                                 UserCraftId = allUserCraft.UserCraftId + 1
                             });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
 
-                        context.AllUserCraft.Add(new AllUserCraft()
+                        _context.AllUserCraft.Add(new AllUserCraft()
                         {
                             IsComplete = false,
                             CraftId = craft.CraftId,
@@ -151,12 +134,12 @@ namespace ffxivList.Controllers
                             UserCraftId = allUserCraft.UserCraftId + 1
                         });
 
-                        context.SaveChanges();
+                        _context.SaveChanges();
                     }
 #elif RELEASE
                     foreach (var leve in levemetes)
                     {
-                        context.UserLevemete.Add(
+                        _context.UserLevemete.Add(
                             new UserLevemete()
                             {
                                 IsComplete = false,
@@ -167,7 +150,7 @@ namespace ffxivList.Controllers
 
                     foreach (var quest in quests)
                     {
-                        context.UserQuest.Add(
+                        _context.UserQuest.Add(
                             new UserQuest()
                             {
                                 IsComplete = false,
@@ -178,7 +161,7 @@ namespace ffxivList.Controllers
 
                     foreach (var craft in crafts)
                     {
-                        context.UserCraft.Add(
+                        _context.UserCraft.Add(
                             new UserCraft()
                             {
                                 IsComplete = false,
@@ -190,13 +173,13 @@ namespace ffxivList.Controllers
                 }
                 else
                 {
-                    var userDetails = context.Users.Find(user.UserId);
+                    var userDetails = _context.Users.Find(user.UserId);
                     user.UserRole = userDetails.UserRole;
                     user.UserCraftsCompleted = userDetails.UserCraftsCompleted;
                     user.UserQuestsCompleted = userDetails.UserQuestsCompleted;
                     user.UserLevemetesCompleted = userDetails.UserLevemetesCompleted;
                 }
-                context.SaveChanges();
+                _context.SaveChanges();
 
                 // Create claims principal
                 var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -210,7 +193,6 @@ namespace ffxivList.Controllers
 
                 // Sign user into cookie middleware
                 await HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-            }
             return RedirectToLocal("/");
         }
         
@@ -231,13 +213,11 @@ namespace ffxivList.Controllers
         public async Task<IActionResult> ProfileView()
         {
             UserProfile userProfile;
-
-            using (var context = new FfListContext(_dbContextOptions))
-            {
-                List<Levemete> levemetes = await context.Levemetes.AsNoTracking().ToListAsync();
-                List<Quest> quests = await context.Quest.AsNoTracking().ToListAsync();
-                List<Craft> crafts = await context.Craft.AsNoTracking().ToListAsync();
-                var user = context.Users.Find(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+            
+                List<Levemete> levemetes = await _context.Levemetes.AsNoTracking().ToListAsync();
+                List<Quest> quests = await _context.Quest.AsNoTracking().ToListAsync();
+                List<Craft> crafts = await _context.Craft.AsNoTracking().ToListAsync();
+                var user = _context.Users.Find(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
                 string userEmail = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 userProfile = new UserProfile()
@@ -253,7 +233,6 @@ namespace ffxivList.Controllers
                     QuestsCompleted = user.UserQuestsCompleted,
                     QuestsTotal = quests.Count
                 };
-            }
             return View(userProfile);
         }
 

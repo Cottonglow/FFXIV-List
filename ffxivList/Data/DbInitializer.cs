@@ -30,8 +30,8 @@ namespace ffxivList.Data
                     },
                     new Models.User
                     {
-                        UserId = "auth0|58fcf8591504b634f54742ce",
-                        UserName = "user",
+                        UserId = "auth0|5904ebbf5d4f881ecedb18ad",
+                        UserName = "user1",
                         UserRole = "User",
                         UserQuestsCompleted = 0,
                         UserLevemetesCompleted = 0,

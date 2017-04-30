@@ -79,6 +79,11 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (quest.QuestName.Length > 50 || quest.QuestLevel > 60 || quest.QuestLevel < 1)
+                {
+                    return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed });
+                }
+
                 _context.Add(quest);
 
                 await _context.SaveChangesAsync();
@@ -155,6 +160,11 @@ namespace ffxivList.Controllers
                 return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
+            if (quest.QuestName.Length > 50 || quest.QuestLevel > 60 || quest.QuestLevel < 1)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed });
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -221,7 +231,14 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
+            var quest = await _context.Quest
+                .SingleOrDefaultAsync(m => m.QuestId == id);
+            if (quest == null)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.QuestNotFound });
+            }
+
+            quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
             _context.Quest.Remove(quest);
 #if DEBUG
             var allUserQuests = await _context.AllUserQuest.AsNoTracking().Where(q => q.QuestId == quest.QuestId).ToListAsync();

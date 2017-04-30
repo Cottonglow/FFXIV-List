@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ffxivList.Data;
 using ffxivList.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList.Controllers
 {
+    [Authorize]
     public class AllUserQuestsController : Controller
     {
         private readonly FfListContext _context;

@@ -74,6 +74,11 @@ namespace ffxivList.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (craft.CraftName.Length > 50 || craft.CraftLevel > 60 || craft.CraftLevel < 1)
+                {
+                    return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed});
+                }
+
                 _context.Add(craft);
 
                 await _context.SaveChangesAsync();
@@ -150,6 +155,11 @@ namespace ffxivList.Controllers
                 return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
+            if (craft.CraftName.Length > 50 || craft.CraftLevel > 60 || craft.CraftLevel < 1)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.ParametersNotAllowed });
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -216,7 +226,13 @@ namespace ffxivList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftId == id);
+            var craft = await _context.Craft
+                .SingleOrDefaultAsync(m => m.CraftId == id);
+            if (craft == null)
+            {
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
+            }
+            
             _context.Craft.Remove(craft);
 #if DEBUG
             var allUserCrafts = await _context.AllUserCraft.AsNoTracking().Where(c => c.CraftId == craft.CraftId).ToListAsync();

@@ -15,7 +15,6 @@
     <thead>
     <tr>
         <th>Name</th>
-        <th>Email</th>
         <th>Role</th>
         <th class="text-center">Levemetes Complete</th>
         <th class="text-center">Crafts Complete</th>
@@ -27,9 +26,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UserRole)
@@ -47,7 +43,6 @@
                 <div class="btn-group" role="group" aria-label="...">
                     <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-success" role="button" >Edit</a>
                     <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-warning" role="button">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger" role="button" >Delete</a>
                 </div>
             </td>
         </tr>

@@ -7,6 +7,10 @@ namespace ffxivList.Data
 {
     public class FfListContext : DbContext
     {
+        public FfListContext()
+        {
+        }
+
         public FfListContext(DbContextOptions<FfListContext> options)
             : base(options)
         {
