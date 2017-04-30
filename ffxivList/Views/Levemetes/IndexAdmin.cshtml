@@ -5,6 +5,10 @@
 }
 <br />
 <h2>@ViewData["Title"]</h2>
+@if (ViewData["Alert"] != null)
+{
+    <div class="alert alert-danger" role="alert"> @ViewData["Alert"]</div>
+}
 <p>
     <a asp-action="Create" class="btn btn-primary" role="button" >Create</a>
 </p>

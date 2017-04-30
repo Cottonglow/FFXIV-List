@@ -31,40 +31,39 @@ namespace ffxivList.Controllers
             return View(modelContainer);
         }
 
-        [Authorize(Policy = "RequireAdministratorRole")]
         // GET: Quests
-        public async Task<IActionResult> IndexAdmin()
+        [Authorize(Policy = "RequireAdministratorRole")]
+        public async Task<IActionResult> IndexAdmin(string alertMessage)
         {
-            ModelContainer modelContainer = new ModelContainer {Quest = await _context.Quest.ToListAsync()};
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            if (User.Identity.IsAuthenticated && userId != null)
+            if (alertMessage != null)
             {
-                modelContainer.UserQuest = await _context.UserQuest.Where(l => l.UserId == userId).ToListAsync();
+                ViewData["Alert"] = alertMessage;
             }
+            ModelContainer modelContainer = new ModelContainer {Quest = await _context.Quest.ToListAsync()};
             return View(modelContainer);
         }
-
-        [Authorize(Policy = "RequireAdministratorRole")]
+        
         // GET: Quests/Details/5
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var quest = await _context.Quest
                 .SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.QuestNotFound });
             }
 
             return View(quest);
         }
 
-        [Authorize(Policy = "RequireAdministratorRole")]
         // GET: Quests/Create
+        [Authorize(Policy = "RequireAdministratorRole")]
         public IActionResult Create()
         {
             return View();
@@ -129,13 +128,13 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var quest = await _context.Quest.SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.QuestNotFound });
             }
             return View(quest);
         }
@@ -153,7 +152,7 @@ namespace ffxivList.Controllers
 #endif
             if (id != quest.QuestId)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             if (ModelState.IsValid)
@@ -181,15 +180,15 @@ namespace ffxivList.Controllers
 #endif
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!QuestExists(quest.QuestId))
                     {
-                        return NotFound();
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.QuestNotFound });
                     }
                     else
                     {
-                        throw;
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.DbUpdateError + e.Message});
                     }
                 }
                 return RedirectToAction("IndexAdmin");
@@ -203,14 +202,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var quest = await _context.Quest
                 .SingleOrDefaultAsync(m => m.QuestId == id);
             if (quest == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.QuestNotFound });
             }
 
             return View(quest);

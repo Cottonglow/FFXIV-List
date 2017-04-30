@@ -28,8 +28,12 @@ namespace ffxivList.Controllers
 
         // GET: Crafts
         [Authorize(Policy = "RequireAdministratorRole")]
-        public async Task<IActionResult> IndexAdmin()
+        public async Task<IActionResult> IndexAdmin(string alertMessage)
         {
+            if (alertMessage != null)
+            {
+                ViewData["Alert"] = alertMessage;
+            }
             List<Craft> crafts = await _context.Craft.ToListAsync();
             return View(crafts);
         }
@@ -40,14 +44,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new {alertMessage = Constants.IdNotFound });
             }
 
             var craft = await _context.Craft
                 .SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
             }
 
             return View(craft);
@@ -118,13 +122,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
-            var craft = await _context.Craft.SingleOrDefaultAsync(m => m.CraftId == id);
+            var craft = await _context.Craft
+                .SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
             }
             return View(craft);
         }
@@ -142,7 +147,7 @@ namespace ffxivList.Controllers
 #endif
             if (id != craft.CraftId)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             if (ModelState.IsValid)
@@ -170,15 +175,15 @@ namespace ffxivList.Controllers
 #endif
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!CraftExists(craft.CraftId))
                     {
-                        return NotFound();
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
                     }
                     else
                     {
-                        throw;
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.DbUpdateError + e.Message });
                     }
                 }
                 return RedirectToAction("IndexAdmin");
@@ -192,14 +197,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var craft = await _context.Craft
                 .SingleOrDefaultAsync(m => m.CraftId == id);
             if (craft == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.CraftNotFound });
             }
 
             return View(craft);

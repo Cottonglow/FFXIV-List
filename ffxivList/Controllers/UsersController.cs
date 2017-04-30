@@ -19,8 +19,12 @@ namespace ffxivList.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string alertMessage)
         {
+            if (alertMessage != null)
+            {
+                ViewData["Alert"] = alertMessage;
+            }
             return View(await _context.Users.ToListAsync());
         }
 
@@ -29,14 +33,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.IdNotFound });
             }
 
             var user = await _context.Users
                 .SingleOrDefaultAsync(m => m.UserId == id);
             if (user == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.UserNotFound });
             }
 
             return View(user);
@@ -47,13 +51,13 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.IdNotFound });
             }
 
             var user = await _context.Users.SingleOrDefaultAsync(m => m.UserId == id);
             if (user == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.UserNotFound });
             }
             return View(user);
         }
@@ -70,7 +74,7 @@ namespace ffxivList.Controllers
 #endif
             if (id != user.UserId)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.IdNotFound });
             }
 
             if (ModelState.IsValid)
@@ -81,15 +85,15 @@ namespace ffxivList.Controllers
                     
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!UserExists(user.UserId))
                     {
-                        return NotFound();
+                        return RedirectToAction("Index", new { alertMessage = Constants.UserNotFound });
                     }
                     else
                     {
-                        throw;
+                        return RedirectToAction("Index", new { alertMessage = Constants.DbUpdateError + e.Message });
                     }
                 }
                 return RedirectToAction("Index");
@@ -102,7 +106,7 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.IdNotFound });
             }
 
             var user = await _context.Users
@@ -110,7 +114,7 @@ namespace ffxivList.Controllers
             
             if (user == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", new { alertMessage = Constants.UserNotFound });
             }
 
             return View(user);

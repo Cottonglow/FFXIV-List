@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ffxivList
 {
-    public class AuthorixationHandler
+    public class AuthorizationHandler
     {
     }
 

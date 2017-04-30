@@ -27,8 +27,12 @@ namespace ffxivList.Controllers
 
         // GET: Levemetes
         [Authorize(Policy = "RequireAdministratorRole")]
-        public async Task<IActionResult> IndexAdmin()
+        public async Task<IActionResult> IndexAdmin(string alertMessage)
         {
+            if (alertMessage != null)
+            {
+                ViewData["Alert"] = alertMessage;
+            }
             List<Levemete> levemete = await _context.Levemetes.ToListAsync();
             return View(levemete);
         }
@@ -39,14 +43,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var levemete = await _context.Levemetes
                 .SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.LevemeteNotFound });
             }
 
             return View(levemete);
@@ -112,13 +116,13 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var levemete = await _context.Levemetes.SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.LevemeteNotFound });
             }
             return View(levemete);
         }
@@ -136,7 +140,7 @@ namespace ffxivList.Controllers
 #endif
             if (id != levemete.LevemeteId)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             if (ModelState.IsValid)
@@ -165,15 +169,15 @@ namespace ffxivList.Controllers
 #endif
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException e)
                 {
                     if (!LevemeteExists(levemete.LevemeteId))
                     {
-                        return NotFound();
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.LevemeteNotFound });
                     }
                     else
                     {
-                        throw;
+                        return RedirectToAction("IndexAdmin", new { alertMessage = Constants.DbUpdateError + e.Message });
                     }
                 }
                 return RedirectToAction("IndexAdmin");
@@ -187,14 +191,14 @@ namespace ffxivList.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.IdNotFound });
             }
 
             var levemete = await _context.Levemetes
                 .SingleOrDefaultAsync(m => m.LevemeteId == id);
             if (levemete == null)
             {
-                return NotFound();
+                return RedirectToAction("IndexAdmin", new { alertMessage = Constants.LevemeteNotFound });
             }
 
             return View(levemete);
