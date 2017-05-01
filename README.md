@@ -42,6 +42,7 @@ CI346 - Assignment
 <li> <b>Email:</b> user1@test.test <b>UserName:</b> user1 <b>Password:</b> test <b>Role:</b> Standard User</li>
 </ul>
 <p> <b> Note: </b> If you create your own account, when you quit your session, the in memory database will forget you, however you will still exist on the auth0 authorization database.</p>
+<p> Also, if you restart the server and you notice you are already logged in on the website, please relog to refresh the cookies. </p>
 <p> You may receive a security warning on logging in stating that the information you have entered will be sent over an insecure connection and could be read by a third party. </p>
 <p> You're username and email will be used for profiling purposes as well as creating a database entry for you to be able to store your user progress. </p>
 
