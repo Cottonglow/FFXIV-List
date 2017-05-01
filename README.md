@@ -5,7 +5,7 @@ CI346 - Assignment
 <p>This website has been created for the purpose of an assignment for university.</p>
 
 <h2>Debug Instructions</h2>
-<p> This project has been built and tested on Windows 7 and Windows 10 on Firefox. </p>
+<p> This project has been built and tested on Windows 7 and Windows 10 on Firefox and Opera. </p>
 <h3>Building</h3>
 <ul>
 <li> Download the .Net Core SDK from <a href="https://www.microsoft.com/net/core#windowscmd">the official microsoft page</a> or get the latest version straight from the <a href="https://github.com/dotnet/cli">github repository</a>.</li>
