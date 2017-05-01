@@ -13,9 +13,16 @@
     <Content Remove="wwwroot/images\banner2.svg" />
     <Content Remove="wwwroot/images\banner3.svg" />
     <Content Remove="wwwroot/images\banner4.svg" />
-    <Content Remove="wwwroot/images\CraftBanner.png" />
-    <Content Remove="wwwroot/images\LevemeteBanner.PNG" />
-    <Content Remove="wwwroot/images\QuestBanner.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\images\CraftBanner.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\LevemeteBanner.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\QuestBanner.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Auth0.AuthenticationApi" Version="3.7.0" />
@@ -41,12 +48,11 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot/images\QuestBanner.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
