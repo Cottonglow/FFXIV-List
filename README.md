@@ -33,11 +33,13 @@ CI346 - Assignment
 <h2> Website Instructions</h2>
 
 <h3> Login </h3>
-<p>You are able to sign up with your own account or with one of the following from the in memory database:</p>
+<p>You are able to sign up with your own account (It will default to standard user.) or with one of the following from the in memory database:</p>
 <ul>
 <li> <b>Email:</b> admin@test.test <b>UserName:</b> admin2 <b>Password:</b> test <b>Role:</b> Admin </li>
 <li> <b>Email:</b> user1@test.test <b>UserName:</b> user1 <b>Password:</b> test <b>Role:</b> Standard User</li>
 </ul>
+<p> You may receive a security warning on logging in stating that the information you have entered will be sent over an insecure connection and could be read by a third party. </p>
+<p> You're username and email will be used for profiling purposes as well as creating a database entry for you to be able to store your user progress. </p>
 
 <h3> Authorization Levels </h3>
 <p>The website has several authorization roles which offer a different user experience:</p>
@@ -56,4 +58,11 @@ CI346 - Assignment
 <p>To see all your progress at once, check out your user profile.</p>
 
 <h3> Admin </h3>
-<p> After logging into an admin account (UserName: admin2, Password:test), head over to the Admin tab available in the navigation bar and select the entries you want to update. </p>
+<p> After logging into an admin account (UserName: admin2, Password: test), head over to the Admin tab available in the navigation bar and select the entries you want to update. </p>
+
+<h1> Future Enhancements </h1>
+<ul>
+<li> No longer trigger a security warning on login. </li>
+<li> More information on error pages. </li>
+<li> Be able to delete users on auth0 from code. </li>
+</ul>
