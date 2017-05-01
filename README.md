@@ -4,26 +4,56 @@ CI346 - Assignment
 <p>As it is difficult to gauge how much you have done and how much is left, you can use FFXIVList to track your progress. </p>
 <p>This website has been created for the purpose of an assignment for university.</p>
 
-<h3>Instructions</h3>
-<h4>Building</h4>
+<h2>Debug Instructions</h2>
+
+<h3>Building</h3>
 <ul>
 <li> Open command line. </li>
 <li> Change directory to the ffxivList directory. </li>
-cd "FFXIV-List\ffxivList"
+<p>cd "FFXIV-List\ffxivList"</p>
 <li> Enter the dotnet publish command </li>
-dotnet publish -o publish -c Debug
+<p>dotnet publish -o publish -c Debug</p>
 <li> Change directory to the publish directory. </li>
-cd publish
+<p>cd publish</p>
 <li> Enter the dotnet run dll command </li>
-dotnet ffxivList.dll
+<p>dotnet ffxivList.dll</p>
 <li> Open a browser on http://localhost:5000</li>
 <li> Shut down website server when done in command line </li>
 </ul>
-<h4>Testing</h4>
+
+<h3>Testing</h3>
 <ul>
 <li> Open command line. </li>
 <li> Change directory to the ffxivList.Tests directory. </li>
-cd "FFXIV-List\ffxivList.Tests"
+<p>cd "FFXIV-List\ffxivList.Tests"</p>
 <li> Enter the dotnet test command </li>
-dotnet test
+<p>dotnet test</p>
 </ul>
+
+<h2> Website Instructions</h2>
+
+<h3> Login </h3>
+<p>You are able to sign up with your own account or with one of the following from the in memory database:</p>
+<ul>
+<li> <b>Email:</b> admin@test.test <b>UserName:</b> admin2 <b>Password:</b> test <b>Role:</b> Admin </li>
+<li> <b>Email:</b> user1@test.test <b>UserName:</b> user1 <b>Password:</b> test <b>Role:</b> Standard User</li>
+</ul>
+
+<h3> Authorization Levels </h3>
+<p>The website has several authorization roles which offer a different user experience:</p>
+<ul>
+<li> <b>Admin</b> </li>
+<p>Administrators are able to track their in game progress by checking checkboxes on their respective pages and view their profile as well as carry out any administrative needs on the website (e.g. creating, editing or deleting entries).</p>
+<li> <b>Standard User</b> </li>
+<p>A standard user is able to track their in game progress by checking checkboxes on their respective pages and view their profile.</p>
+<li> <b>Anonymous User</b></li>
+<p>An anonymous user is only able to view pages but not track their in game progress. They also do not have access to a user profile.</p>
+</ul>
+
+<h3> Saving Progress </h3>
+<p>To start saving your in game progress, head over to the Levemetes, Quests or Crafts tabs available in the navigation bar after you have logged in.</p>
+<p>Once you are there, you are able to check the relevant checkboxes and hit the Save button at the bottom of the screen to send your data to the database. You can instantly see your progress bar updating! </p>
+<p>To see all your progress at once, check out your user profile.</p>
+
+<h3> Admin </h3>
+<p> After logging into an admin account (UserName: admin2, Password:test), head over to the Admin tab available in the navigation bar and select the entries you want to update. </p>
