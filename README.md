@@ -69,4 +69,5 @@ CI346 - Assignment
 <li> No longer trigger a security warning on login. </li>
 <li> More information on error pages. </li>
 <li> Be able to delete users on auth0 from code. </li>
+<li> Enhance database, add item relationship and show how many items is needed to complete tasks. </li>
 </ul>
