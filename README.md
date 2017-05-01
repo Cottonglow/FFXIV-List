@@ -8,9 +8,12 @@ CI346 - Assignment
 
 <h3>Building</h3>
 <ul>
+<li> Download the .Net Core SDK from <a href="https://www.microsoft.com/net/core#windowscmd">the official microsoft page</a> or get the latest version straight from the <a href="https://github.com/dotnet/cli">github repository</a>.</li>
 <li> Open command line. </li>
 <li> Change directory to the ffxivList directory. </li>
 <p>cd "FFXIV-List\ffxivList"</p>
+<li> Enter the dotnet restore command to restore the dependencies and tools. </li>
+<p> dotnet restore </p>
 <li> Enter the dotnet publish command </li>
 <p>dotnet publish -o publish -c Debug</p>
 <li> Change directory to the publish directory. </li>
@@ -38,6 +41,7 @@ CI346 - Assignment
 <li> <b>Email:</b> admin@test.test <b>UserName:</b> admin2 <b>Password:</b> test <b>Role:</b> Admin </li>
 <li> <b>Email:</b> user1@test.test <b>UserName:</b> user1 <b>Password:</b> test <b>Role:</b> Standard User</li>
 </ul>
+<p> <b> Note: </b> If you create your own account, when you quit your session, the in memory database will forget you, however you will still exist on the auth0 authorization database.</p>
 <p> You may receive a security warning on logging in stating that the information you have entered will be sent over an insecure connection and could be read by a third party. </p>
 <p> You're username and email will be used for profiling purposes as well as creating a database entry for you to be able to store your user progress. </p>
 
